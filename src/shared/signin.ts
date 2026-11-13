@@ -1,5 +1,4 @@
 // Sign-in paste parser. Pure: the sign-in page uses it, and the Durable Object re-checks the pasted text.
-// Ported from mocks/signin.html (extractCode), logic and error copy unchanged.
 
 // The code is base64 and may contain "/", "+" and "=", so take everything after /adfs/saml/redirect/
 export function extractCode(text: string): { code: string } | { error: string } {

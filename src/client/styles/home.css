@@ -1,4 +1,4 @@
-/* Home page, ported from mocks/hifi.html. No inline styles: the CSP is style-src 'self'.
+/* Home page. No inline styles: the CSP is style-src 'self'.
  * Colours come from tokens and from classes; the script sets only CSSOM properties. */
 [hidden] { display: none !important; }
 

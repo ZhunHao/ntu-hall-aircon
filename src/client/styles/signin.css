@@ -1,4 +1,4 @@
-/* Sign-in page, ported from mocks/signin.html. No inline styles: the CSP is style-src 'self'. */
+/* Sign-in page. No inline styles: the CSP is style-src 'self'. */
 .top { display: flex; align-items: center; justify-content: space-between; padding: var(--wa-space-xs) var(--wa-space-m); }
 .top .brand { display: inline-flex; gap: var(--wa-space-xs); align-items: center; font-weight: 500; font-size: var(--wa-font-size-l); }
 .top .brand wa-icon { color: var(--wa-color-brand-fill-loud); }

@@ -22,35 +22,6 @@ It runs as a single Cloudflare Worker: static UI, a thin proxy to Daikin's hall 
 
 Later updates: push to the cloned repo and Workers Builds redeploys automatically.
 
-### Notes for maintainers (button requirements)
-
-From the [Deploy to Cloudflare buttons docs](https://developers.cloudflare.com/workers/platform/deploy-buttons/):
-
-- The repo must be **public** and hosted on **github.com or gitlab.com**.
-- The button reads a **Wrangler config file** (`wrangler.jsonc` / `wrangler.toml`) to detect bindings and auto-provision resources (KV, D1, R2, Durable Objects, Queues, …). Keep a `wrangler.jsonc` at the repo root even if local dev uses the `cf` CLI, and give every binding a default name.
-- Secrets are declared in **`.dev.vars.example`** (dotenv format); the setup page prompts for each one:
-  ```ini
-  SESSION_SECRET=generate-with-openssl-rand-hex-32
-  OWNER_EMAIL=your-id@e.ntu.edu.sg
-  ```
-- Custom `build` / `deploy` scripts in `package.json` are pre-filled in the setup page. Without a `deploy` script it defaults to `npx wrangler deploy`.
-- Binding descriptions shown on the setup page go in `package.json`:
-  ```json
-  {
-    "cloudflare": {
-      "bindings": {
-        "SESSION_SECRET": {
-          "description": "Random key that encrypts your stored Daikin login. Generate with `openssl rand -hex 32`."
-        },
-        "OWNER_EMAIL": {
-          "description": "Your NTU email. Only this account can sign in to your copy."
-        }
-      }
-    }
-  }
-  ```
-- If the Worker ever lives in a subdirectory of a monorepo, it must be fully self-contained there (own `package.json` and lockfile), and the button URL points at that subdirectory.
-
 ---
 
 ## How it works
@@ -137,7 +108,7 @@ Useful `aircon` fields from `/me`: `power`, `setpoint`, `mode`, `fanstep`, `flap
 
 ### Schedules
 
-The ESP32 project's main feature, the nightly on/off schedule, runs in the cloud: periods are nights (noon to noon) or days, and fire with your browser closed, using the login stored in your Durable Object. Daikin's hall system switches every aircon off at 11:00; the app turns it back on at 11:01 only if Daikin cut it. To opt out, end a period at 11:00. Details are in the [design spec](docs/superpowers/specs/2026-10-30-hall-aircon-worker-design.md).
+The ESP32 project's main feature, the nightly on/off schedule, runs in the cloud: periods are nights (noon to noon) or days, and fire with your browser closed, using the login stored in your Durable Object. Daikin's hall system switches every aircon off at 11:00; the app turns it back on at 11:01 only if Daikin cut it. To opt out, end a period at 11:00.
 
 ---
 
@@ -174,8 +145,6 @@ Tests: `npm run typecheck && npx vitest run`. They never call the real Daikin AP
 
 **Decision:** [Web Awesome](https://webawesome.com/) components themed with **Home Assistant's own design tokens**. This is the same stack Home Assistant's frontend uses: it depends on `@home-assistant/webawesome` (its fork of Web Awesome 3.14.0) and maps every `--wa-*` token onto its `--ha-*` tokens. The look is a mobile-first home-control dashboard with first-class dark mode.
 
-Design mocks the app was built from (references only, not the built app): [`hifi`](mocks/hifi.html) (home), [`signin`](mocks/signin.html), [`schedule`](mocks/schedule.html) and [`settings`](mocks/settings.html).
-
 ### How it's put together
 
 | Piece | Source | License |
@@ -207,7 +176,6 @@ To refresh the HA tokens, download the `*.globals.ts` files from HA's theme fold
 ### Known gaps
 
 - HA's `--ha-box-shadow-*` tokens live outside the files the build script reads, so shadows fall back to Web Awesome's defaults.
-- The mocks load pinned versions from jsDelivr without Subresource Integrity hashes; the real build should bundle them or add `integrity` attributes.
 
 ## Related
 

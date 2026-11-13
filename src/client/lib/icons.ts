@@ -102,7 +102,7 @@ const PATHS: Record<string, string> = {
   wrench: mdiWrench,
 };
 
-/** App icon key to mdi icon name. Keys and names are copied from mocks/hifi.html, mocks/settings.html and mocks/schedule.html. */
+/** App icon key to mdi icon name. */
 export const ICONS = {
   menu: "menu",
   dark: "theme-light-dark",

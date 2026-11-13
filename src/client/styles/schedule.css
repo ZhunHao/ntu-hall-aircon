@@ -1,4 +1,4 @@
-/* Schedule page, ported from mocks/schedule.html. No inline styles: the CSP is style-src 'self'.
+/* Schedule page. No inline styles: the CSP is style-src 'self'.
  * Bars take only left/width from schedule.ts through CSSOM; colours come from the m-* classes below. */
 [hidden] { display: none !important; }
 
