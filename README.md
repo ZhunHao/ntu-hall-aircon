@@ -174,7 +174,7 @@ Tests: `npm run typecheck && npx vitest run`. They never call the real Daikin AP
 
 **Decision:** [Web Awesome](https://webawesome.com/) components themed with **Home Assistant's own design tokens**. This is the same stack Home Assistant's frontend uses: it depends on `@home-assistant/webawesome` (its fork of Web Awesome 3.14.0) and maps every `--wa-*` token onto its `--ha-*` tokens. The look is a mobile-first home-control dashboard with first-class dark mode.
 
-Reference mock (design reference only, not the built app): [`mocks/hifi.html`](mocks/hifi.html). The menu's **Theme** switch shows the same build without the HA layer, for comparison.
+Design mocks the app was built from (references only, not the built app): [`hifi`](mocks/hifi.html) (home), [`signin`](mocks/signin.html), [`schedule`](mocks/schedule.html) and [`settings`](mocks/settings.html).
 
 ### How it's put together
 
