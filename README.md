@@ -209,10 +209,6 @@ To refresh the HA tokens, download the `*.globals.ts` files from HA's theme fold
 - HA's `--ha-box-shadow-*` tokens live outside the files the build script reads, so shadows fall back to Web Awesome's defaults.
 - The mocks load pinned versions from jsDelivr without Subresource Integrity hashes; the real build should bundle them or add `integrity` attributes.
 
-### Other systems we compared
-
-All linked from [`wireframe.html`](wireframe.html) as design references only, each built with its real components: Serendie (Mitsubishi Electric), Siemens iX, Cloudscape (AWS), Daikin DDS, Ionic, plain Web Awesome and Home Assistant. Rule of thumb that led here: start from a published design system in the app's own domain rather than inventing tokens, then pick the one whose components fit the job (here, a phone-first home-control UI).
-
 ## Related
 
 - [ntu-hall-ac-scheduler](https://github.com/ZhunHao/ntu-hall-ac-scheduler): the ESP32-C6 IR hardware version, plus `ENDPOINTS.md` with the full API notes.
