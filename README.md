@@ -108,7 +108,7 @@ Useful `aircon` fields from `/me`: `power`, `setpoint`, `mode`, `fanstep`, `flap
 
 ### Schedules
 
-The ESP32 project's main feature, the nightly on/off schedule, runs in the cloud: periods are nights (noon to noon) or days, and fire with your browser closed, using the login stored in your Durable Object. Daikin's hall system switches every aircon off at 11:00; the app turns it back on at 11:01 only if Daikin cut it. To opt out, end a period at 11:00.
+Schedules switch your aircon on and off for you. They run in the cloud, so they keep working with your browser closed, using the login stored in your Durable Object. Periods are nights (noon to noon) or days. Daikin's hall system switches every aircon off at 11:00; the app turns it back on at 11:01 only if Daikin cut it. To opt out, end a period at 11:00.
 
 ---
 
