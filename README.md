@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/ZhunHao/ntu-hall-aircon/actions/workflows/ci.yml/badge.svg)](https://github.com/ZhunHao/ntu-hall-aircon/actions/workflows/ci.yml)
 
-A browser replacement for the **NTU Hall Aircon** mobile app (`sg.daikin.ntu.ntu_mobile`), for residents who want remote control, schedules and a nicer dashboard **without** building the ESP32 IR hardware from [ntu-hall-ac-scheduler](https://github.com/ZhunHao/ntu-hall-ac-scheduler).
+A browser replacement for the **NTU Hall Aircon** mobile app (`sg.daikin.ntu.ntu_mobile`), for residents who want remote control, schedules and a nicer dashboard.
 
 It runs as a single Cloudflare Worker: static UI, a thin proxy to Daikin's hall API, and one Durable Object that keeps your encrypted Daikin login so schedules keep running in the cloud with your browser closed. Each resident deploys **their own copy** to their own Cloudflare account, so nobody else ever holds their login token.
 
