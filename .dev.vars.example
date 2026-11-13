@@ -1,0 +1,2 @@
+SESSION_SECRET=generate-with-openssl-rand-hex-32
+OWNER_EMAIL=your-id@e.ntu.edu.sg

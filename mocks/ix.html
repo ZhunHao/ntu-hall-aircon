@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en" data-ix-theme="classic" data-ix-color-schema="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hall Aircon · Siemens iX</title>
+<!-- Real Siemens iX web components (MIT) and iX icons (MIT) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@siemens/ix@5.3.0/dist/siemens-ix/siemens-ix.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@siemens/ix@5.3.0/dist/siemens-ix/theme/classic-light.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@siemens/ix@5.3.0/dist/siemens-ix/theme/classic-dark.css">
+<script type="module" src="https://cdn.jsdelivr.net/npm/@siemens/ix@5.3.0/dist/siemens-ix/siemens-ix.esm.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@siemens/ix-icons@3.7.0/dist/ix-icons/ix-icons.esm.js"></script>
+<style>
+  html, body { height: 100%; margin: 0; }
+  .page { display: grid; gap: 1rem; padding-bottom: 2rem; }
+  .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: .5rem; }
+  @media (max-width: 48em) { .kpis { grid-template-columns: 1fr 1fr; } }
+  .cols { display: grid; grid-template-columns: 1fr; gap: 1rem; align-items: start; }
+  @media (min-width: 48.0625em) { .cols { grid-template-columns: 1fr 1fr; } }
+  @media (min-width: 80.0625em) { .cols { grid-template-columns: 1fr 1fr 1fr; } }
+  ix-card { width: 100%; }
+  .stack { display: grid; gap: 1rem; }
+  .row { display: flex; gap: .5rem; flex-wrap: wrap; align-items: center; }
+  .qr { width: 120px; height: 120px; border: 8px solid #fff; background: repeating-linear-gradient(90deg, #111 0 5px, transparent 5px 10px), repeating-linear-gradient(0deg, #111 0 5px, transparent 5px 12px), #fff; }
+</style>
+</head>
+<body>
+<ix-application id="app">
+  <ix-application-header name="Hall Aircon" name-suffix="unofficial">
+    <ix-icon-button slot="end" icon="light-dark" variant="subtle-tertiary" aria-label="Toggle dark" id="scheme"></ix-icon-button>
+    <ix-icon-button slot="end" icon="refresh" variant="subtle-tertiary" aria-label="Refresh"></ix-icon-button>
+    <ix-avatar slot="end" initials="HR"></ix-avatar>
+  </ix-application-header>
+
+  <ix-menu application-name="Hall Aircon" application-description="Hall 11">
+    <ix-menu-item home icon="home" active>Room</ix-menu-item>
+    <ix-menu-item icon="trend">Usage</ix-menu-item>
+    <ix-menu-item icon="coins">Wallet</ix-menu-item>
+    <ix-menu-item icon="history" notifications="2">Logbook</ix-menu-item>
+    <ix-menu-item bottom icon="cogwheel">Pairing</ix-menu-item>
+  </ix-menu>
+
+  <ix-content>
+    <ix-content-header slot="header" header-title="H11-XX-XX-XXXX-01" header-subtitle="Hall 11 · Daikin unit · you are the Room Account holder">
+      <ix-button variant="subtle-primary" icon="coins">Top up</ix-button>
+      <ix-button variant="danger-primary" icon="shutdown" id="power">Turn off</ix-button>
+    </ix-content-header>
+
+    <div class="page">
+      <ix-message-bar type="warning" persistent>Low balance: S$2.40 left. The aircon switches off at S$0.</ix-message-bar>
+
+      <div class="kpis">
+        <ix-kpi label="Setpoint" value="24" unit="°C" id="kpi-sp"></ix-kpi>
+        <ix-kpi label="Room temperature" value="26" unit="°C"></ix-kpi>
+        <ix-kpi label="Wallet" value="2.40" unit="S$" state="warning"></ix-kpi>
+        <ix-kpi label="Today" value="1.24" unit="S$"></ix-kpi>
+      </div>
+
+      <div class="cols">
+        <ix-card variant="outline" passive>
+          <ix-card-content>
+            <ix-card-title>Controls</ix-card-title>
+            <div class="stack">
+              <ix-slider label="Setpoint (°C)" min="16" max="28" value="24" trace trace-reference="22" helper-text="The hall allows 22–26 °C" id="slider"></ix-slider>
+              <div>
+                <ix-typography format="label">Mode</ix-typography>
+                <div class="row" id="modes">
+                  <ix-toggle-button icon="snowflake" pressed>Cool</ix-toggle-button>
+                  <ix-toggle-button icon="device-fan">Fan</ix-toggle-button>
+                  <ix-toggle-button icon="refresh">Auto</ix-toggle-button>
+                  <ix-toggle-button icon="drop">Dry</ix-toggle-button>
+                </div>
+              </div>
+              <ix-select label="Fan speed" value="2">
+                <ix-select-item label="Auto" value="A"></ix-select-item>
+                <ix-select-item label="Level 1" value="1"></ix-select-item>
+                <ix-select-item label="Level 2" value="2"></ix-select-item>
+                <ix-select-item label="Level 3" value="3"></ix-select-item>
+                <ix-select-item label="Level 4" value="4"></ix-select-item>
+                <ix-select-item label="Level 5" value="5"></ix-select-item>
+              </ix-select>
+              <ix-toggle text-on="Swing" text-off="Fixed flap"></ix-toggle>
+              <div class="row"><ix-spinner size="small" id="pending" hidden></ix-spinner><ix-typography format="body-sm" text-color="soft" id="pending-text">The unit confirms changes in about 5 s.</ix-typography></div>
+            </div>
+          </ix-card-content>
+        </ix-card>
+
+        <div class="stack">
+          <ix-card variant="outline" passive>
+            <ix-card-content>
+              <ix-card-title>Unit status</ix-card-title>
+              <ix-key-value-list striped>
+                <ix-key-value icon="shutdown" label="Power"><ix-pill slot="custom-value" variant="success" icon="success" id="power-pill">On</ix-pill></ix-key-value>
+                <ix-key-value icon="location" label="Connection"><ix-pill slot="custom-value" variant="success" outline>Online</ix-pill></ix-key-value>
+                <ix-key-value icon="snowflake" label="Mode" value="Cool"></ix-key-value>
+                <ix-key-value icon="clock" label="Auto-off" value="Daily 11:00"></ix-key-value>
+                <ix-key-value icon="user-profile" label="Remote bills" value="You"></ix-key-value>
+              </ix-key-value-list>
+            </ix-card-content>
+          </ix-card>
+
+          <ix-card variant="outline" passive>
+            <ix-card-content>
+              <ix-card-title>Top up · PayNow</ix-card-title>
+              <div class="row" id="amounts">
+                <ix-toggle-button pressed>S$10</ix-toggle-button><ix-toggle-button>S$20</ix-toggle-button><ix-toggle-button>S$30</ix-toggle-button><ix-toggle-button>S$40</ix-toggle-button><ix-toggle-button>S$50</ix-toggle-button>
+              </div>
+              <div class="row" style="gap:1rem; margin-top:.75rem">
+                <div class="qr" aria-label="PayNow QR placeholder"></div>
+                <div class="stack" style="gap:.5rem">
+                  <ix-pill variant="info" icon="clock">Waiting for payment</ix-pill>
+                  <ix-typography format="body-sm" text-color="soft">Expires in 14:32. Nothing is charged until you confirm in your bank app.</ix-typography>
+                </div>
+              </div>
+            </ix-card-content>
+          </ix-card>
+        </div>
+
+        <ix-card variant="outline" passive>
+          <ix-card-content>
+            <ix-card-title>Logbook</ix-card-title>
+            <ix-event-list>
+              <ix-event-list-item item-color="color-primary">Cooling 01:15–04:25 · 190 min · from web · −S$1.24</ix-event-list-item>
+              <ix-event-list-item item-color="color-warning">Turned on by remote 22:00–00:30 · 150 min · −S$0.98</ix-event-list-item>
+              <ix-event-list-item item-color="color-success">PayNow top-up · 28 Oct 22:25 · +S$10.00</ix-event-list-item>
+              <ix-event-list-item item-color="color-neutral">Auto-off · daily 11:00</ix-event-list-item>
+            </ix-event-list>
+          </ix-card-content>
+        </ix-card>
+      </div>
+    </div>
+  </ix-content>
+</ix-application>
+
+
+<script type="module">
+  const html = document.documentElement;
+  const app = document.getElementById("app");
+  let dark = matchMedia("(prefers-color-scheme: dark)").matches;
+  const setScheme = () => {
+    html.dataset.ixColorSchema = dark ? "dark" : "light";
+    app.setAttribute("color-schema", dark ? "dark" : "light");
+  };
+  setScheme();
+  document.getElementById("scheme").onclick = () => { dark = !dark; setScheme(); };
+
+  // One pressed toggle per group
+  for (const id of ["modes", "amounts"]) {
+    const group = document.getElementById(id);
+    group.addEventListener("click", (e) => {
+      const btn = e.target.closest("ix-toggle-button");
+      if (!btn) return;
+      group.querySelectorAll("ix-toggle-button").forEach((b) => (b.pressed = b === btn));
+    });
+  }
+
+  // Setpoint: clamp to the hall's 22–26, show the ~5 s pending state
+  const slider = document.getElementById("slider"), kpi = document.getElementById("kpi-sp");
+  const pending = document.getElementById("pending"), text = document.getElementById("pending-text");
+  let t;
+  slider.addEventListener("valueChange", (e) => {
+    const v = Math.min(26, Math.max(22, Math.round(e.detail)));
+    kpi.value = v;
+    pending.hidden = false; text.textContent = "Sending to the unit…";
+    clearTimeout(t);
+    t = setTimeout(() => { pending.hidden = true; text.textContent = "The unit confirms changes in about 5 s."; }, 5000);
+  });
+
+  const power = document.getElementById("power"), pill = document.getElementById("power-pill");
+  let on = true;
+  power.onclick = () => {
+    on = !on;
+    power.textContent = on ? "Turn off" : "Turn on";
+    power.variant = on ? "danger-primary" : "primary";
+    pill.textContent = on ? "On" : "Off";
+    pill.variant = on ? "success" : "neutral";
+  };
+</script>
+</body>
+</html>

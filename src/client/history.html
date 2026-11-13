@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en" class="wa-theme-default wa-palette-default wa-light theme-ha" data-scheme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>History · Hall Aircon</title>
+<link rel="icon" href="data:,">
+<script type="module" src="./pages/history.ts"></script>
+<!-- Page markup. history.ts clones this into the app shell and fills the lists with DOM APIs only
+     (Daikin's text is untrusted) and no style="" attributes: the CSP is style-src 'self'. -->
+<template id="history-main">
+  <h1>History</h1>
+  <wa-tab-group id="tabs" active="usage">
+    <wa-tab panel="usage">Usage</wa-tab>
+    <wa-tab panel="topups">Top-ups</wa-tab>
+    <wa-tab panel="notifications">Notifications</wa-tab>
+
+    <wa-tab-panel name="usage">
+      <div class="list" id="list-usage"></div>
+      <p class="note" id="note-usage" hidden></p>
+      <wa-button appearance="outlined" id="more-usage" hidden>Load more</wa-button>
+    </wa-tab-panel>
+    <wa-tab-panel name="topups">
+      <div class="list" id="list-topups"></div>
+      <p class="note" id="note-topups" hidden></p>
+      <wa-button appearance="outlined" id="more-topups" hidden>Load more</wa-button>
+    </wa-tab-panel>
+    <wa-tab-panel name="notifications">
+      <div class="list" id="list-notifications"></div>
+      <p class="note" id="note-notifications" hidden></p>
+      <wa-button appearance="outlined" id="more-notifications" hidden>Load more</wa-button>
+    </wa-tab-panel>
+  </wa-tab-group>
+</template>
+</head>
+<body></body>
+</html>

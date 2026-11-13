@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hall Aircon · Daikin DDS</title>
+<!-- Real Daikin Design System web components (MIT) + tokens (ISC). No Daikin logo: this app is unofficial. -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@daikin-oss/dds-tokens@2.0.0/build/css/density/Default/variables.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@daikin-oss/dds-tokens@2.0.0/build/css/daikin/Light/variables.css">
+<link id="dark" rel="stylesheet" media="not all" href="https://cdn.jsdelivr.net/npm/@daikin-oss/dds-tokens@2.0.0/build/css/daikin/Dark/variables.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+<script type="module" src="https://cdn.jsdelivr.net/npm/@daikin-oss/design-system-web-components@2.1.0/+esm"></script>
+<style>
+  body { margin: 0; font-family: Roboto, sans-serif; background: var(--dds-color-common-surface-secondary); color: var(--dds-color-common-text-primary); }
+  .wordmark { font: var(--dds-font-bold-tight-500); font-family: Roboto, sans-serif; color: var(--dds-color-common-brand-default); margin-right: 24px; white-space: nowrap; }
+  main { max-width: 1120px; margin: 0 auto; padding: 24px 16px 48px; display: grid; gap: 16px; }
+  h1 { font: var(--dds-font-bold-tight-700); font-family: Roboto, sans-serif; margin: 0; }
+  .sub { color: var(--dds-color-common-text-secondary); margin: 4px 0 0; }
+  .head { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end; justify-content: space-between; }
+  .actions { display: flex; gap: 8px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 16px; align-items: start; }
+  .wide { grid-column: 1 / -1; }
+  .card-body { display: grid; gap: 20px; padding-top: 8px; }
+  .big { font: var(--dds-font-bold-tight-800); font-family: Roboto, sans-serif; font-size: 56px; line-height: 1; }
+  .big small { font-size: 20px; font-weight: 400; color: var(--dds-color-common-text-secondary); margin-left: 4px; }
+  .stats { display: flex; gap: 32px; flex-wrap: wrap; align-items: flex-end; }
+  .stat-label { color: var(--dds-color-common-text-secondary); font: var(--dds-font-regular-tight-350); font-family: Roboto, sans-serif; }
+  .stat-value { font: var(--dds-font-bold-tight-600); font-family: Roboto, sans-serif; }
+  .range-ends { display: flex; justify-content: space-between; color: var(--dds-color-common-text-secondary); font-size: 12px; }
+  .qr { width: 128px; height: 128px; border-radius: 8px; border: 8px solid #fff; background: repeating-linear-gradient(90deg, #111 0 5px, transparent 5px 10px), repeating-linear-gradient(0deg, #111 0 5px, transparent 5px 12px), #fff; box-shadow: 0 0 0 1px var(--dds-color-common-border-empty); }
+  .row { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+  .chips { display: flex; gap: 8px; flex-wrap: wrap; }
+  .nav-spacer { flex: 1; }
+  .wordmark { align-self: center; }
+  .menu-btn { display: none; margin-right: 8px; }
+  /* DDS breakpoint: max-width 767px */
+  @media (max-width: 767px) {
+    .menu-btn { display: inline-flex; }
+    .wide-only { display: none; }
+    .wordmark { margin-right: 0; }
+    main { padding: 16px 12px 40px; }
+    .head .actions { width: 100%; }
+    .head .actions daikin-button { flex: 1; }
+    .big { font-size: 44px; }
+  }
+  @media (min-width: 1200px) {
+    /* Desktop: controls and operation side by side with the unit list as a third column */
+    [slot="panel:control"].grid { grid-template-columns: 1fr 1fr 1fr; }
+    [slot="panel:control"] .wide { grid-column: auto; }
+  }
+</style>
+</head>
+<body>
+<daikin-navigation horizontal-padding="medium" navigation-aria-label="Main">
+  <daikin-icon-button class="menu-btn" variant="ghost" button-aria-label="Open menu" id="menu">
+    <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2"/></svg>
+  </daikin-icon-button>
+  <span class="wordmark">Hall Aircon</span>
+  <daikin-navigation-item class="wide-only" current href="#">Room</daikin-navigation-item>
+  <daikin-navigation-item class="wide-only" href="#">Usage</daikin-navigation-item>
+  <daikin-navigation-item class="wide-only" href="#">Wallet</daikin-navigation-item>
+  <daikin-navigation-item class="wide-only" href="#">Pairing</daikin-navigation-item>
+  <span class="nav-spacer"></span>
+  <daikin-button variant="ghost" size="small" id="scheme">Light / dark</daikin-button>
+</daikin-navigation>
+
+<!-- Below DDS's 767px breakpoint the top-nav links move into a drawer -->
+<daikin-drawer placement="left" id="drawer" drawer-aria-label="Menu">
+  <daikin-drawer-header with-close-button>Hall Aircon</daikin-drawer-header>
+  <daikin-vertical-navigation exclusive navigation-aria-label="Main">
+    <daikin-vertical-navigation-item current href="#"><span slot="label">Room</span></daikin-vertical-navigation-item>
+    <daikin-vertical-navigation-item href="#"><span slot="label">Usage</span></daikin-vertical-navigation-item>
+    <daikin-vertical-navigation-item href="#"><span slot="label">Wallet</span></daikin-vertical-navigation-item>
+    <daikin-vertical-navigation-item href="#"><span slot="label">Pairing</span></daikin-vertical-navigation-item>
+  </daikin-vertical-navigation>
+</daikin-drawer>
+
+<main>
+  <div class="head">
+    <div>
+      <h1>H11-XX-XX-XXXX-01</h1>
+      <p class="sub">Hall 11 · unofficial web controller</p>
+    </div>
+    <div class="actions">
+      <daikin-button variant="outline">Top up</daikin-button>
+      <daikin-button variant="fill" color="danger" id="power">Turn off</daikin-button>
+    </div>
+  </div>
+
+  <daikin-inline-notification status="warning" layout="horizontal" id="notice">
+    <span slot="title">Low balance</span>
+    S$2.40 left. The aircon switches off at S$0.
+  </daikin-inline-notification>
+
+  <daikin-tabs value="control">
+    <daikin-tab value="control">Control</daikin-tab>
+    <daikin-tab value="usage">Usage</daikin-tab>
+    <daikin-tab value="wallet">Wallet</daikin-tab>
+    <daikin-tab-panels slot="panels" value="control" panels='["control","usage","wallet"]'>
+
+      <div slot="panel:control" class="grid" style="padding-top:16px">
+        <daikin-card>
+          <daikin-card-header>Temperature<span slot="description">The unit confirms changes in about 5 s</span></daikin-card-header>
+          <div class="card-body">
+            <div class="stats">
+              <div><div class="stat-label">Setpoint</div><div class="big"><span id="sp">24</span><small>°C</small></div></div>
+              <div><div class="stat-label">Room</div><div class="stat-value">26 °C</div></div>
+              <daikin-status-message status="positive" size="small" id="state">Cooling</daikin-status-message>
+            </div>
+            <div>
+              <daikin-slider id="slider" min="22" max="26" step="1" value="24" slider-aria-label="Setpoint"></daikin-slider>
+              <div class="range-ends"><span>22 °C</span><span>26 °C</span></div>
+            </div>
+          </div>
+        </daikin-card>
+
+        <daikin-card>
+          <daikin-card-header>Operation<span slot="description">Mode, fan and flap</span></daikin-card-header>
+          <div class="card-body">
+            <daikin-input-group label="Mode">
+              <daikin-radio-group value="C" orientation="horizontal">
+                <daikin-radio value="C" label="Cool"></daikin-radio>
+                <daikin-radio value="F" label="Fan"></daikin-radio>
+                <daikin-radio value="A" label="Auto"></daikin-radio>
+                <daikin-radio value="D" label="Dry"></daikin-radio>
+              </daikin-radio-group>
+            </daikin-input-group>
+            <daikin-input-group label="Fan speed">
+              <daikin-dropdown value="2">
+                <daikin-dropdown-item value="A">Auto</daikin-dropdown-item>
+                <daikin-dropdown-item value="1">Level 1</daikin-dropdown-item>
+                <daikin-dropdown-item value="2">Level 2</daikin-dropdown-item>
+                <daikin-dropdown-item value="3">Level 3</daikin-dropdown-item>
+                <daikin-dropdown-item value="4">Level 4</daikin-dropdown-item>
+                <daikin-dropdown-item value="5">Level 5</daikin-dropdown-item>
+              </daikin-dropdown>
+            </daikin-input-group>
+            <div class="row"><daikin-toggle id="swing"></daikin-toggle><label for="swing">Swing flap</label></div>
+          </div>
+        </daikin-card>
+
+        <daikin-card class="wide">
+          <daikin-card-header>Unit</daikin-card-header>
+          <daikin-list border="underline">
+            <daikin-list-item type="text">Power<daikin-tag slot="action" color="green" hide-remove-button id="power-tag">On</daikin-tag></daikin-list-item>
+            <daikin-list-item type="text">Connection<daikin-tag slot="action" color="green" hide-remove-button>Online</daikin-tag></daikin-list-item>
+            <daikin-list-item type="text">Remote control bills<span slot="action">You</span></daikin-list-item>
+            <daikin-list-item type="text">Auto-off<span slot="action">Daily 11:00</span></daikin-list-item>
+          </daikin-list>
+        </daikin-card>
+      </div>
+
+      <div slot="panel:usage" style="padding-top:16px">
+        <daikin-card>
+          <daikin-card-header>Usage<span slot="description">S$0.39 per hour, billed per session</span></daikin-card-header>
+          <daikin-table id="table" border="underline"></daikin-table>
+        </daikin-card>
+      </div>
+
+      <div slot="panel:wallet" class="grid" style="padding-top:16px">
+        <daikin-card>
+          <daikin-card-header>Balance</daikin-card-header>
+          <div class="card-body">
+            <div class="big">S$2.40</div>
+            <daikin-progress-bar value="2.4" max="50" variant="error" helper="Wallet cap S$50">S$2.40 of S$50</daikin-progress-bar>
+          </div>
+        </daikin-card>
+        <daikin-card>
+          <daikin-card-header>Top up with PayNow<span slot="description">QR valid for 15 minutes</span></daikin-card-header>
+          <div class="card-body">
+            <div class="chips" id="amounts">
+              <daikin-chip type="filter" checked>S$10</daikin-chip>
+              <daikin-chip type="filter">S$20</daikin-chip>
+              <daikin-chip type="filter">S$30</daikin-chip>
+              <daikin-chip type="filter">S$40</daikin-chip>
+              <daikin-chip type="filter">S$50</daikin-chip>
+            </div>
+            <div class="row">
+              <div class="qr" aria-label="PayNow QR placeholder"></div>
+              <div style="display:grid; gap:8px; max-width: 260px">
+                <daikin-status-message status="neutral" size="small">Waiting for payment</daikin-status-message>
+                <span class="stat-label">Nothing is charged until you confirm in your bank app.</span>
+              </div>
+            </div>
+          </div>
+        </daikin-card>
+      </div>
+    </daikin-tab-panels>
+  </daikin-tabs>
+</main>
+
+
+<script type="module">
+  const dark = document.getElementById("dark");
+  let isDark = matchMedia("(prefers-color-scheme: dark)").matches;
+  const apply = () => (dark.media = isDark ? "all" : "not all");
+  apply();
+  document.getElementById("scheme").onclick = () => { isDark = !isDark; apply(); };
+
+  const drawer = document.getElementById("drawer");
+  document.getElementById("menu").addEventListener("click", () => (drawer.open = true));
+  drawer.addEventListener("close", () => (drawer.open = false));
+  const wide = matchMedia("(min-width: 768px)");
+  const notice = document.getElementById("notice");
+  const fit = () => { if (wide.matches) drawer.open = false; notice.layout = wide.matches ? "horizontal" : "vertical"; };
+  wide.addEventListener("change", fit);
+  fit();
+
+  await customElements.whenDefined("daikin-table");
+  const table = document.getElementById("table");
+  table.headers = [
+    { key: "start", label: "Start" }, { key: "end", label: "End" },
+    { key: "duration", label: "Duration" }, { key: "source", label: "Source" },
+    { key: "amount", label: "Amount", alignment: "right" },
+  ];
+  table.rows = [
+    { id: "1", start: "Today 01:15", end: "04:25", duration: "190 min", source: "Web", amount: "S$1.24" },
+    { id: "2", start: "Yesterday 22:00", end: "00:30", duration: "150 min", source: "Remote", amount: "S$0.98" },
+    { id: "3", start: "28 Oct 23:10", end: "02:40", duration: "210 min", source: "Web", amount: "S$1.37" },
+    { id: "4", start: "27 Oct 22:40", end: "03:05", duration: "265 min", source: "Web", amount: "S$1.73" },
+  ];
+
+  // Tabs drive the panels
+  const tabs = document.querySelector("daikin-tabs"), panels = document.querySelector("daikin-tab-panels");
+  tabs.addEventListener("change", () => (panels.value = tabs.value));
+
+  const slider = document.getElementById("slider"), sp = document.getElementById("sp"), state = document.getElementById("state");
+  let t;
+  slider.addEventListener("change", () => {
+    sp.textContent = slider.value;
+    state.status = "neutral"; state.textContent = "Sending to the unit…";
+    clearTimeout(t);
+    t = setTimeout(() => { state.status = "positive"; state.textContent = "Cooling"; }, 5000);
+  });
+
+  document.getElementById("amounts").addEventListener("click", (e) => {
+    const chip = e.target.closest("daikin-chip");
+    if (chip) document.querySelectorAll("#amounts daikin-chip").forEach((c) => (c.checked = c === chip));
+  });
+
+  const power = document.getElementById("power"), tag = document.getElementById("power-tag");
+  let on = true;
+  power.onclick = () => {
+    on = !on;
+    power.textContent = on ? "Turn off" : "Turn on";
+    power.color = on ? "danger" : "default";
+    tag.textContent = on ? "On" : "Off";
+    tag.color = on ? "green" : "gray";
+  };
+</script>
+</body>
+</html>

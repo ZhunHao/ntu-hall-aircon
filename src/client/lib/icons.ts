@@ -1,0 +1,171 @@
+import { registerIconLibrary } from "@awesome.me/webawesome/dist/components/icon/library.js";
+import {
+  mdiAccountCircleOutline,
+  mdiAlertOutline,
+  mdiArrowLeft,
+  mdiArrowOscillating,
+  mdiBellOutline,
+  mdiCalendarClockOutline,
+  mdiCashPlus,
+  mdiChartBoxOutline,
+  mdiCheckCircleOutline,
+  mdiClockOutline,
+  mdiCogOutline,
+  mdiCreditCardOutline,
+  mdiFan,
+  mdiHomeOutline,
+  mdiInformationOutline,
+  mdiLogout,
+  mdiMenu,
+  mdiMinus,
+  mdiOpenInNew,
+  mdiPlus,
+  mdiPower,
+  mdiQrcode,
+  mdiRemote,
+  mdiSnowflake,
+  mdiThermometer,
+  mdiThermostatAuto,
+  mdiThemeLightDark,
+  mdiWalletOutline,
+  mdiWaterPercent,
+  mdiWifi,
+  mdiWifiOff,
+  mdiWrench,
+  mdiCellphone,
+  mdiContentCopy,
+  mdiContentPaste,
+  mdiLaptop,
+  mdiLinkVariant,
+  mdiLogin,
+  mdiShieldLockOutline,
+  mdiTimerSandComplete,
+  mdiCalendarWeek,
+  mdiDeleteOutline,
+  mdiEraser,
+  mdiHistory,
+  mdiPauseCircleOutline,
+  mdiPencilOutline,
+  mdiWeatherNight,
+  mdiWhiteBalanceSunny,
+} from "@mdi/js";
+
+/** Material Design Icons used by the app: mdi icon name to its SVG path (24x24). */
+const PATHS: Record<string, string> = {
+  "account-circle-outline": mdiAccountCircleOutline,
+  "alert-outline": mdiAlertOutline,
+  "arrow-left": mdiArrowLeft,
+  cellphone: mdiCellphone,
+  "content-copy": mdiContentCopy,
+  "content-paste": mdiContentPaste,
+  laptop: mdiLaptop,
+  "link-variant": mdiLinkVariant,
+  login: mdiLogin,
+  "shield-lock-outline": mdiShieldLockOutline,
+  "timer-sand-complete": mdiTimerSandComplete,
+  "calendar-week": mdiCalendarWeek,
+  "delete-outline": mdiDeleteOutline,
+  eraser: mdiEraser,
+  history: mdiHistory,
+  "pause-circle-outline": mdiPauseCircleOutline,
+  "pencil-outline": mdiPencilOutline,
+  "weather-night": mdiWeatherNight,
+  "white-balance-sunny": mdiWhiteBalanceSunny,
+  "arrow-oscillating": mdiArrowOscillating,
+  "bell-outline": mdiBellOutline,
+  "calendar-clock-outline": mdiCalendarClockOutline,
+  "cash-plus": mdiCashPlus,
+  "chart-box-outline": mdiChartBoxOutline,
+  "check-circle-outline": mdiCheckCircleOutline,
+  "clock-outline": mdiClockOutline,
+  "cog-outline": mdiCogOutline,
+  "credit-card-outline": mdiCreditCardOutline,
+  fan: mdiFan,
+  "home-outline": mdiHomeOutline,
+  "information-outline": mdiInformationOutline,
+  logout: mdiLogout,
+  menu: mdiMenu,
+  minus: mdiMinus,
+  "open-in-new": mdiOpenInNew,
+  plus: mdiPlus,
+  power: mdiPower,
+  qrcode: mdiQrcode,
+  remote: mdiRemote,
+  snowflake: mdiSnowflake,
+  thermometer: mdiThermometer,
+  "thermostat-auto": mdiThermostatAuto,
+  "theme-light-dark": mdiThemeLightDark,
+  "wallet-outline": mdiWalletOutline,
+  "water-percent": mdiWaterPercent,
+  wifi: mdiWifi,
+  "wifi-off": mdiWifiOff,
+  wrench: mdiWrench,
+};
+
+/** App icon key to mdi icon name. Keys and names are copied from mocks/hifi.html, mocks/settings.html and mocks/schedule.html. */
+export const ICONS = {
+  menu: "menu",
+  dark: "theme-light-dark",
+  bell: "bell-outline",
+  home: "home-outline",
+  chart: "chart-box-outline",
+  schedule: "calendar-clock-outline",
+  settings: "cog-outline",
+  logout: "logout",
+  wallet: "wallet-outline",
+  qr: "qrcode",
+  thermo: "thermometer",
+  wifi: "wifi",
+  wifioff: "wifi-off",
+  alert: "alert-outline",
+  ac: "snowflake",
+  minus: "minus",
+  plus: "plus",
+  cool: "snowflake",
+  fan: "fan",
+  auto: "thermostat-auto",
+  dry: "water-percent",
+  power: "power",
+  cash: "cash-plus",
+  clock: "clock-outline",
+  remote: "remote",
+  swing: "arrow-oscillating",
+  tool: "wrench",
+  check: "check-circle-outline",
+  info: "information-outline",
+  card: "credit-card-outline",
+  external: "open-in-new",
+  pause: "pause-circle-outline",
+  copy: "content-copy",
+  clear: "eraser",
+  week: "calendar-week",
+  delete: "delete-outline",
+  edit: "pencil-outline",
+  night: "weather-night",
+  day: "white-balance-sunny",
+  activity: "history",
+} as const satisfies Record<string, keyof typeof PATHS>;
+
+export type IconKey = keyof typeof ICONS;
+
+/** `data:` URL of an icon's SVG, or "" for an unknown name. The CSP allows `data:` in img-src and connect-src. */
+export function iconUrl(name: string): string {
+  const d = PATHS[name];
+  if (!d) return "";
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="${d}"/></svg>`;
+  return `data:image/svg+xml,${encodeURIComponent(svg)}`;
+}
+
+registerIconLibrary("mdi", {
+  resolver: (name) => iconUrl(name),
+  mutator: (svg) => svg.setAttribute("fill", "currentColor"),
+});
+
+/** A `<wa-icon>` from the mdi library. Pass `label` only when the icon stands alone (no visible text). */
+export function icon(key: IconKey, label?: string): HTMLElement {
+  const el = document.createElement("wa-icon");
+  el.setAttribute("library", "mdi");
+  el.setAttribute("name", ICONS[key]);
+  if (label) el.setAttribute("label", label);
+  return el;
+}

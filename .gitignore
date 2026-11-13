@@ -1,0 +1,14 @@
+# Dependencies and build output
+node_modules/
+dist/
+.wrangler/
+
+# Local secrets (see .dev.vars.example)
+.dev.vars
+.env*
+
+# Local tooling
+.claude/
+.superpowers/
+.DS_Store
+*.log

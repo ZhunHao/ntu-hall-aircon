@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en" class="wa-theme-default wa-palette-default wa-light theme-ha" data-scheme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Home · Hall Aircon</title>
+<link rel="icon" href="data:,">
+<script type="module" src="./pages/home.ts"></script>
+<!-- Page markup, ported from mocks/hifi.html. home.ts clones these into the app shell and the page body.
+     No style="" attributes anywhere: the CSP is style-src 'self'. Icons are data-i keys, painted by home.ts. -->
+<template id="home-main">
+  <div id="loading" class="loading"><wa-spinner></wa-spinner><span>Loading your aircon…</span></div>
+  <wa-callout variant="danger" id="load-error" hidden>
+    <wa-icon slot="icon" data-i="alert"></wa-icon>
+    Couldn't load your aircon. Retrying…
+  </wa-callout>
+
+  <div id="home" class="home" hidden>
+    <div class="badges">
+      <button type="button" class="badge" id="badge-wallet"><wa-icon data-i="wallet"></wa-icon><span><small>Wallet</small><span id="badge-balance">—</span></span></button>
+      <div class="badge" id="badge-room"><wa-icon data-i="thermo"></wa-icon><span><small>Room</small><span id="badge-temp">—</span></span></div>
+      <div class="badge" id="badge-unit"><wa-icon data-i="wifi" id="unit-icon"></wa-icon><span><small>Unit</small><span id="unit-text">Online</span></span></div>
+    </div>
+
+    <wa-callout variant="warning" id="callout" hidden>
+      <wa-icon slot="icon" id="callout-icon" data-i="alert"></wa-icon>
+      <span id="callout-text"></span>
+    </wa-callout>
+
+    <div class="sections">
+      <section id="aircon-section">
+        <h2 class="section-title"><wa-icon data-i="ac"></wa-icon>Aircon</h2>
+        <wa-card class="thermo" id="thermo" data-mode="C" data-power="on">
+          <div class="dial" id="dial">
+            <svg viewBox="0 0 260 260" id="dial-svg" role="slider" tabindex="0" aria-label="Setpoint" aria-valuemin="22" aria-valuemax="26" aria-valuenow="24" aria-valuetext="24 °C">
+              <circle class="track" id="track" cx="130" cy="130" r="108" fill="none" stroke-width="22" stroke-linecap="round" transform="rotate(135 130 130)"/>
+              <circle class="value" id="arc" cx="130" cy="130" r="108" fill="none" stroke-width="22" stroke-linecap="round" transform="rotate(135 130 130)"/>
+              <circle class="cur" id="cur" r="4"/>
+              <circle class="knob" id="knob" r="9"/>
+            </svg>
+            <div class="center">
+              <div class="action"><span id="action-text">Cooling</span><wa-spinner id="spin" hidden></wa-spinner></div>
+              <div class="target"><span id="sp">24</span><sup>°C</sup></div>
+              <div class="current"><wa-icon data-i="thermo"></wa-icon><span id="room-temp">—</span></div>
+            </div>
+            <div class="steps">
+              <wa-button pill appearance="outlined" id="minus" title="Lower"><wa-icon data-i="minus" label="Lower"></wa-icon></wa-button>
+              <wa-button pill appearance="outlined" id="plus" title="Raise"><wa-icon data-i="plus" label="Raise"></wa-icon></wa-button>
+            </div>
+          </div>
+
+          <div class="controls">
+            <wa-radio-group class="mode-group" label="Mode" orientation="horizontal" value="C" id="mode" size="s" hint="Cools the room to the setpoint.">
+              <wa-radio appearance="button" value="C"><wa-icon data-i="cool"></wa-icon> Cool</wa-radio>
+              <wa-radio appearance="button" value="D"><wa-icon data-i="dry"></wa-icon> Dehumidify</wa-radio>
+              <wa-radio appearance="button" value="F"><wa-icon data-i="fan"></wa-icon> Fan</wa-radio>
+              <wa-radio appearance="button" value="A"><wa-icon data-i="auto"></wa-icon> Auto</wa-radio>
+            </wa-radio-group>
+            <wa-radio-group label="Fan speed" orientation="horizontal" value="A" id="fan" size="s">
+              <wa-radio appearance="button" value="A">Auto</wa-radio>
+              <wa-radio appearance="button" value="1">1</wa-radio>
+              <wa-radio appearance="button" value="2">2</wa-radio>
+              <wa-radio appearance="button" value="3">3</wa-radio>
+              <wa-radio appearance="button" value="4">4</wa-radio>
+              <wa-radio appearance="button" value="5">5</wa-radio>
+            </wa-radio-group>
+            <wa-switch id="swing" hint="Off keeps the flap fixed">Swing flap</wa-switch>
+            <wa-button variant="danger" id="power"><wa-icon slot="start" data-i="power"></wa-icon><span id="power-text">Turn off</span></wa-button>
+            <div class="disabled-note" id="disabled-note" hidden></div>
+          </div>
+        </wa-card>
+      </section>
+
+      <section>
+        <h2 class="section-title"><wa-icon data-i="wallet"></wa-icon>Wallet and schedule</h2>
+        <div class="stack">
+          <div class="tile wide" id="tile-balance">
+            <div class="ico"><wa-icon data-i="wallet"></wa-icon></div>
+            <div class="grow">
+              <div class="t">Balance <span class="money" id="balance">—</span></div>
+              <wa-progress-bar id="balance-bar" value="0" label="Balance out of S$50 cap"></wa-progress-bar>
+            </div>
+            <wa-button variant="brand" size="s" id="topup">Top up</wa-button>
+          </div>
+          <div class="tiles">
+            <div class="tile" id="tile-room"><div class="ico"><wa-icon data-i="thermo"></wa-icon></div><div class="grow"><div class="t">Room</div><div class="s" id="tile-room-text">—</div></div></div>
+            <div class="tile" id="tile-off"><div class="ico"><wa-icon data-i="clock"></wa-icon></div><div class="grow"><div class="t">Daikin auto-off</div><div class="s">Daily at 11:00, by Daikin's hall system</div></div></div>
+            <a class="tile wide link" id="tile-schedule" href="/schedule"><div class="ico"><wa-icon data-i="schedule"></wa-icon></div><div class="grow"><div class="t">Schedule</div><div class="s" id="schedule-text">—</div></div></a>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</template>
+
+<template id="home-dialog">
+  <wa-dialog label="Top up" id="dialog" light-dismiss>
+    <div class="stack">
+      <wa-radio-group label="Pay with" orientation="horizontal" value="paynow" id="method" size="s">
+        <wa-radio appearance="button" value="paynow"><wa-icon data-i="qr"></wa-icon> PayNow</wa-radio>
+        <wa-radio appearance="button" value="card"><wa-icon data-i="card"></wa-icon> Card</wa-radio>
+      </wa-radio-group>
+      <wa-radio-group label="Amount" orientation="horizontal" id="amount" size="s"></wa-radio-group>
+
+      <div class="stack" id="pay-paynow">
+        <wa-button variant="brand" id="show-qr"><wa-icon slot="start" data-i="qr"></wa-icon><span id="show-qr-text">Show PayNow QR</span></wa-button>
+        <div class="stack" id="qr-box" hidden>
+          <div class="qr-wrap"><img id="qr" class="qr" alt="PayNow QR code" width="176" height="176"></div>
+          <div class="split">
+            <span class="cluster"><wa-spinner id="qr-spin"></wa-spinner><span id="qr-status">Waiting for payment</span></span>
+            <span>Expires in <span class="countdown" id="countdown">15:00</span></span>
+          </div>
+        </div>
+        <span class="caption">Scan in any banking app. Nothing is charged until you confirm there; your balance updates by itself.</span>
+      </div>
+
+      <div class="stack" id="pay-card" hidden>
+        <wa-callout variant="warning">
+          <wa-icon slot="icon" data-i="alert"></wa-icon>
+          <strong>Untick “Save Card” on the eNETS page.</strong> eNETS ticks it as soon as you type a card number. Once a card is saved, every later card top-up is locked to it, and the hall app has no way to remove it.
+        </wa-callout>
+        <wa-button variant="brand" id="enets"><wa-icon slot="end" data-i="external"></wa-icon>Continue to eNETS</wa-button>
+        <a id="enets-link" class="caption" target="_blank" rel="noopener noreferrer" hidden>eNETS didn't open? Open it here.</a>
+        <span class="caption">Visa and Mastercard. Your balance updates once eNETS confirms the payment.</span>
+      </div>
+      <wa-callout variant="danger" id="pay-error" hidden><span id="pay-error-text"></span></wa-callout>
+    </div>
+    <wa-button slot="footer" variant="brand" data-dialog="close">Close</wa-button>
+  </wa-dialog>
+</template>
+</head>
+<body></body>
+</html>

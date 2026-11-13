@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hall Aircon · Serendie</title>
+<!-- Real Serendie UI React components (MIT) by Mitsubishi Electric, with Serendie Symbols -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@serendie/ui@3.7.2/dist/styles.css">
+<!-- jsDelivr bundles pin different React builds (symbols 19.2.6, react-dom/client ^19.3.0); force one copy -->
+<script type="importmap">
+{
+  "imports": {
+    "https://cdn.jsdelivr.net/npm/react@19.2.6/+esm": "https://cdn.jsdelivr.net/npm/react@19.3.0/+esm",
+    "https://cdn.jsdelivr.net/npm/react@19.2.6/jsx-runtime/+esm": "https://cdn.jsdelivr.net/npm/react@19.3.0/jsx-runtime/+esm",
+    "https://cdn.jsdelivr.net/npm/react@%5E19.3.0/+esm": "https://cdn.jsdelivr.net/npm/react@19.3.0/+esm",
+    "https://cdn.jsdelivr.net/npm/react@^19.3.0/+esm": "https://cdn.jsdelivr.net/npm/react@19.3.0/+esm"
+  }
+}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; }
+  body { font-family: "Noto Sans JP", system-ui, sans-serif; background: var(--colors-sd-system-color-component-surface); color: var(--colors-sd-system-color-component-on-surface); }
+  /* Serendie breakpoints (design tokens): medium 768px, large 1024px */
+  .app { min-height: 100vh; display: flex; flex-direction: column; }
+  .bar { position: sticky; top: 0; z-index: 5; background: var(--colors-sd-system-color-component-surface); border-bottom: 1px solid var(--colors-sd-system-color-component-outline-bright); }
+  .body { flex: 1; display: grid; grid-template-columns: 1fr; }
+  .side { display: none; }
+  .content { display: grid; gap: 16px; padding: 12px 16px 96px; align-content: start; min-width: 0; max-width: 1400px; width: 100%; box-sizing: border-box; margin: 0 auto; }
+  /* Grid areas per Serendie breakpoint: medium 768, large 1024, extraLarge 1280 */
+  .grid { display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr); grid-template-areas: "stats" "controls" "unit" "history"; align-items: start; }
+  .a-stats { grid-area: stats; } .a-controls { grid-area: controls; } .a-unit { grid-area: unit; } .a-history { grid-area: history; }
+  .a-stats { display: grid; gap: 16px; min-width: 0; }
+  .bottom { position: sticky; bottom: 0; }
+  @media (min-width: 768px) {
+    .body { grid-template-columns: 220px minmax(0, 1fr); }
+    .a-stats { grid-template-columns: 1fr 1fr; }
+    .side { display: block; border-right: 1px solid var(--colors-sd-system-color-component-outline-bright); padding: 8px 0; }
+    .content { padding: 16px 24px 32px; }
+    .bottom, .phone-only { display: none; }
+  }
+  @media (min-width: 1024px) {
+    .a-stats { grid-template-columns: 1fr; }
+    .grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-areas: "stats controls" "unit controls" "history controls"; }
+  }
+  @media (min-width: 1280px) {
+    .grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr) minmax(0, 1fr); grid-template-areas: "stats controls unit" "stats controls history"; }
+  }
+  .panel { background: var(--colors-sd-system-color-component-surface-container); border: 1px solid var(--colors-sd-system-color-component-outline-bright); border-radius: var(--radii-sd-system-dimension-radius-large); padding: 16px; display: grid; gap: 12px; }
+  .panel h2 { margin: 0; font-size: 16px; }
+  /* Value cards from Serendie tokens (its DashboardWidget still renders placeholder "title"/"icon" text in 3.7.2) */
+  .stat-title { display: flex; gap: 8px; align-items: center; font-weight: 700; }
+  .stat-values { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .stat-label { font-size: 12px; color: var(--colors-sd-system-color-component-on-surface-variant); }
+  .stat-value { font-size: 32px; font-weight: 700; line-height: 1.1; }
+  .stat-value small { font-size: 14px; font-weight: 400; margin-left: 2px; color: var(--colors-sd-system-color-component-on-surface-variant); }
+  .label { font-weight: 700; font-size: 14px; }
+  .row { display: flex; gap: 12px; align-items: center; justify-content: center; flex-wrap: wrap; }
+  .qr { width: 160px; height: 160px; margin: 8px auto; border-radius: 12px; border: 10px solid #fff; background: repeating-linear-gradient(90deg, #111 0 6px, transparent 6px 12px), repeating-linear-gradient(0deg, #111 0 6px, transparent 6px 14px), #fff; }
+  .muted { color: var(--colors-sd-system-color-component-on-surface-variant); font-size: 13px; text-align: center; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="module">
+  import React, { useState, useEffect } from "https://cdn.jsdelivr.net/npm/react@19.3.0/+esm";
+  import { createRoot } from "https://cdn.jsdelivr.net/npm/react-dom@19.3.0/client/+esm";
+  import htm from "https://cdn.jsdelivr.net/npm/htm@3.1.1/+esm";
+  import {
+    SerendieProvider, TopAppBar, IconButton, Banner, Slider, RadioGroup, RadioButton,
+    Switch, Tabs, TabItem, List, ListItem, Badge, Button, BottomNavigation, BottomNavigationItem, ModalDialog,
+  } from "https://cdn.jsdelivr.net/npm/@serendie/ui@3.7.2/+esm";
+  import {
+    SerendieSymbolMenu as SymbolMenu, SerendieSymbolBell as SymbolBell, SerendieSymbolHome as SymbolHome,
+    SerendieSymbolHistory as SymbolHistory, SerendieSymbolCreditCard as SymbolCreditCard, SerendieSymbolTool as SymbolTool,
+    SerendieSymbolClock as SymbolClock, SerendieSymbolWifi as SymbolWifi, SerendieSymbolUser as SymbolUser,
+    SerendieSymbolPlus as SymbolPlus, SerendieSymbolMinus as SymbolMinus, SerendieSymbolSun as SymbolSun,
+    SerendieSymbolMoon as SymbolMoon, SerendieSymbolActivity as SymbolActivity, SerendieSymbolRefresh as SymbolRefresh,
+  } from "https://cdn.jsdelivr.net/npm/@serendie/symbols@1.0.3/+esm";
+  const html = htm.bind(React.createElement);
+
+  const useMedia = (q) => {
+    const [m, setM] = useState(() => matchMedia(q).matches);
+    useEffect(() => { const mq = matchMedia(q); const f = () => setM(mq.matches); mq.addEventListener("change", f); return () => mq.removeEventListener("change", f); }, [q]);
+    return m;
+  };
+
+  function App() {
+    const wide = useMedia("(min-width: 768px)");
+    const [dark, setDark] = useState(matchMedia("(prefers-color-scheme: dark)").matches);
+    const [tab, setTab] = useState("control");
+    const [sp, setSp] = useState(24);
+    const [pending, setPending] = useState(false);
+    const [mode, setMode] = useState("C");
+    const [topUp, setTopUp] = useState(false);
+    const change = (v) => {
+      setSp(v); setPending(true);
+      clearTimeout(window.__t); window.__t = setTimeout(() => setPending(false), 5000);
+    };
+    const showControl = wide || tab === "control";
+    const showHistory = wide || tab === "history";
+
+    const stats = html`
+      <div class="panel">
+        <div class="stat-title">H11-XX-XX-XXXX <${Badge} styleColor=${pending ? "yellow" : "blue"} size="small">${pending ? "Sending…" : "Cooling"}<//></div>
+        <div class="stat-values">
+          <div><div class="stat-label">Setpoint</div><div class="stat-value">${sp}<small>°C</small></div></div>
+          <div><div class="stat-label">Room</div><div class="stat-value">26<small>°C</small></div></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="stat-title">Wallet</div>
+        <div class="stat-values">
+          <div><div class="stat-label">Balance</div><div class="stat-value">2.40<small>S$</small></div></div>
+          <div><div class="stat-label">Today</div><div class="stat-value">1.24<small>S$</small></div></div>
+        </div>
+        <${Button} styleType="outlined" size="small" onClick=${() => setTopUp(true)}>Top up<//>
+      </div>`;
+
+    const controls = html`
+      <div class="panel">
+        <h2>Controls</h2>
+        <div class="label">Setpoint</div>
+        <div class="row" style=${{ flexWrap: "nowrap" }}>
+          <${IconButton} icon=${html`<${SymbolMinus} />`} shape="circle" styleType="outlined" aria-label="Lower" onClick=${() => change(Math.max(22, sp - 1))} />
+          <div style=${{ flex: 1 }}>
+            <${Slider} min=${22} max=${26} step=${1} value=${[sp]} startLabel="22°C" endLabel="26°C" onValueChange=${(d) => change(d.value[0])} />
+          </div>
+          <${IconButton} icon=${html`<${SymbolPlus} />`} shape="circle" styleType="outlined" aria-label="Raise" onClick=${() => change(Math.min(26, sp + 1))} />
+        </div>
+        <div class="label">Mode</div>
+        <${RadioGroup} value=${mode} onValueChange=${(d) => setMode(d.value)}>
+          <${RadioButton} value="C" label="Cool" />
+          <${RadioButton} value="F" label="Fan" />
+          <${RadioButton} value="A" label="Auto" />
+          <${RadioButton} value="D" label="Dry" helperText="Removes humidity without much cooling" />
+        <//>
+        <${Switch} label="Swing flap" helperText="Off keeps the flap fixed" />
+        <${Button} styleType="filled">Turn off<//>
+      </div>`;
+
+    const unit = html`
+      <div class="panel">
+        <h2>Unit</h2>
+        <${List}>
+          <${ListItem} title="Connection" description="Unit online" headingElement=${html`<${SymbolWifi} />`}
+            trailingElement=${html`<${Badge} styleColor="green" size="small">Online<//>`} />
+          <${ListItem} title="Remote control bills" description="You are the Room Account holder" headingElement=${html`<${SymbolUser} />`} />
+          <${ListItem} title="Auto-off" description="Daily at 11:00" headingElement=${html`<${SymbolClock} />`} />
+        <//>
+      </div>`;
+
+    const history = html`
+      <div class="panel">
+        <h2>History</h2>
+        <${List}>
+          <${ListItem} title="Cooling 01:15 – 04:25" description="190 min · from web" headingElement=${html`<${SymbolActivity} />`}
+            trailingElement=${html`<${Badge} styleColor="blue" size="small">−S$1.24<//>`} />
+          <${ListItem} title="Turned on by remote" description="22:00 – 00:30 · 150 min" headingElement=${html`<${SymbolTool} />`}
+            trailingElement=${html`<${Badge} styleColor="yellow" size="small">−S$0.98<//>`} />
+          <${ListItem} title="PayNow top-up" description="28 Oct · 22:25" headingElement=${html`<${SymbolCreditCard} />`}
+            trailingElement=${html`<${Badge} styleColor="green" size="small">+S$10.00<//>`} />
+          <${ListItem} title="Auto-off" description="Daily at 11:00" headingElement=${html`<${SymbolRefresh} />`} />
+        <//>
+      </div>`;
+
+    return html`
+      <${SerendieProvider} lang="en" colorTheme="konjo" colorMode=${dark ? "dark" : "light"}>
+        <div class="app">
+          <div class="bar">
+            <${TopAppBar} type="navbar" title="Hall 11"
+              headingIconButton=${wide ? undefined : html`<${IconButton} icon=${html`<${SymbolMenu} />`} shape="circle" styleType="ghost" aria-label="Menu" />`}
+              trailingIconButtons=${html`<${React.Fragment}>
+                <${IconButton} icon=${dark ? html`<${SymbolSun} />` : html`<${SymbolMoon} />`} shape="circle" styleType="ghost" aria-label="Toggle dark" onClick=${() => setDark(!dark)} />
+                <${IconButton} icon=${html`<${SymbolBell} />`} shape="circle" styleType="ghost" aria-label="Alerts" />
+              <//>`}
+              badge=${2} />
+            ${!wide && html`
+              <${Tabs} value=${tab} onValueChange=${(d) => setTab(d.value)}>
+                <${TabItem} title="Control" value="control" />
+                <${TabItem} title="History" value="history" />
+              <//>`}
+          </div>
+
+          <div class="body">
+            <nav class="side" aria-label="Main">
+              <${List}>
+                <${ListItem} title="Home" headingElement=${html`<${SymbolHome} />`} selected />
+                <${ListItem} title="History" headingElement=${html`<${SymbolHistory} />`} />
+                <${ListItem} title="Wallet" headingElement=${html`<${SymbolCreditCard} />`} badge=${1} />
+                <${ListItem} title="Room" headingElement=${html`<${SymbolTool} />`} />
+              <//>
+            </nav>
+
+            <main class="content">
+              <${Banner} type="warning" title="Low balance" description="S$2.40 left. The aircon switches off at S$0." />
+              <div class="grid">
+                ${showControl && html`<div class="a-stats">${stats}</div>`}
+                ${showControl && html`<div class="a-controls">${controls}</div>`}
+                ${showControl && html`<div class="a-unit">${unit}</div>`}
+                ${showHistory && html`<div class="a-history">${history}</div>`}
+              </div>
+            </main>
+          </div>
+
+          ${!wide && html`
+            <div class="bottom">
+              <${BottomNavigation}>
+                <${BottomNavigationItem} icon=${html`<${SymbolHome} />`} label="Home" isActive />
+                <${BottomNavigationItem} icon=${html`<${SymbolHistory} />`} label="History" />
+                <${BottomNavigationItem} icon=${html`<${SymbolCreditCard} />`} label="Wallet" count=${1} />
+                <${BottomNavigationItem} icon=${html`<${SymbolTool} />`} label="Room" />
+              <//>
+            </div>`}
+        </div>
+
+        <${ModalDialog} isOpen=${topUp} title="Top up with PayNow" submitButtonLabel="New QR" cancelButtonLabel="Close"
+          onButtonClick=${() => setTopUp(false)} onOpenChange=${(d) => setTopUp(d.open)}>
+          <${RadioGroup} defaultValue="10">
+            <${RadioButton} value="10" label="S$10" />
+            <${RadioButton} value="20" label="S$20" />
+            <${RadioButton} value="50" label="S$50" />
+          <//>
+          <div class="qr" aria-label="PayNow QR placeholder"></div>
+          <div class="muted">Expires in 14:32. Nothing is charged until you confirm in your bank app.</div>
+        <//>
+      <//>
+    `;
+  }
+
+  createRoot(document.getElementById("root")).render(html`<${App} />`);
+</script>
+</body>
+</html>

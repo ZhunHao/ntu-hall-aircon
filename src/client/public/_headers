@@ -1,0 +1,4 @@
+/*
+  Content-Security-Policy: default-src 'self'; img-src 'self' data:; connect-src 'self' data:; style-src 'self' 'sha256-OFqdj19bL7KZ8/lOas0le7FQfHortp+83v/gJ+MsC0E='; font-src 'self'; script-src 'self'; frame-ancestors 'none'; base-uri 'none'
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: no-referrer

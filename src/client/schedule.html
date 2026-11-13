@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en" class="wa-theme-default wa-palette-default wa-light theme-ha" data-scheme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Schedule · Hall Aircon</title>
+<link rel="icon" href="data:,">
+<script type="module" src="./pages/schedule.ts"></script>
+<!-- Page markup, ported from mocks/schedule.html. schedule.ts clones these into the app shell and the page body.
+     No style="" attributes anywhere: the CSP is style-src 'self'. Bars get their position through CSSOM in schedule.ts.
+     Icons are data-i keys, painted by schedule.ts. -->
+<template id="schedule-main">
+  <div id="loading" class="loading"><wa-spinner></wa-spinner><span>Loading your schedule…</span></div>
+  <wa-callout variant="danger" id="load-error" hidden>
+    <wa-icon slot="icon" data-i="alert"></wa-icon>
+    Couldn't load your schedule. Retrying…
+  </wa-callout>
+
+  <div id="sched" class="sched" hidden>
+    <div class="summary">
+      <div class="status" id="status">
+        <span class="status-ico"><wa-icon id="status-icon" data-i="schedule"></wa-icon></span>
+        <div class="status-text">
+          <div class="status-title" id="status-title">Schedule is on</div>
+          <div class="muted" id="next">—</div>
+        </div>
+        <wa-switch id="enabled" size="l" aria-label="Run my schedule"></wa-switch>
+      </div>
+      <div class="stat"><div class="k">This week, about</div><div class="v" id="cost">—</div></div>
+    </div>
+
+    <div class="view-row">
+      <span class="view-label">Show the week as</span>
+      <wa-radio-group id="view" size="s" orientation="horizontal" value="nights" aria-label="Show the week as">
+        <wa-radio appearance="button" value="nights"><span class="vopt"><wa-icon data-i="night"></wa-icon>Nights<small>12:00 → 12:00</small></span></wa-radio>
+        <wa-radio appearance="button" value="days"><span class="vopt"><wa-icon data-i="day"></wa-icon>Days<small>00:00 → 24:00</small></span></wa-radio>
+      </wa-radio-group>
+    </div>
+    <div class="nights" id="nights" role="tablist" aria-label="Nights"></div>
+
+    <div class="layout">
+      <div class="col">
+        <wa-card>
+          <div class="night-head">
+            <div>
+              <h2 id="night-title">Friday night</h2>
+              <div class="muted" id="night-sub">Fri 12:00 → Sat 12:00</div>
+            </div>
+          </div>
+          <div class="mini" id="mini"></div>
+          <div class="axis" data-axis></div>
+          <div class="periods" id="periods"></div>
+          <div class="night-actions">
+            <wa-button appearance="outlined" size="s" id="add"><wa-icon slot="start" data-i="plus"></wa-icon>Add a period</wa-button>
+            <wa-button appearance="outlined" size="s" id="copy"><wa-icon slot="start" data-i="copy"></wa-icon><span id="copy-label">Copy to other nights</span></wa-button>
+            <wa-button appearance="plain" size="s" id="clear"><wa-icon slot="start" data-i="clear"></wa-icon>Clear</wa-button>
+          </div>
+        </wa-card>
+
+        <section class="col">
+          <h2 class="section-title"><wa-icon data-i="activity"></wa-icon>Activity</h2>
+          <wa-card>
+            <ul class="activity" id="activity"></ul>
+            <div class="muted" id="activity-empty">Nothing has run yet. Each switch the schedule makes shows here.</div>
+          </wa-card>
+        </section>
+      </div>
+
+      <div class="col">
+        <h2 class="section-title"><wa-icon data-i="week"></wa-icon>Your week</h2>
+        <wa-card>
+          <div class="week" id="week"></div>
+          <div class="axis week-axis" data-axis></div>
+          <div class="legend">
+            <span><i class="sw m-C"></i>Cool</span><span><i class="sw m-D"></i>Dehumidify</span><span><i class="sw m-F"></i>Fan</span><span><i class="sw m-A"></i>Auto</span><span><i class="sw cut"></i>11:00 off (Daikin's hall system)</span>
+          </div>
+        </wa-card>
+        <wa-callout variant="neutral" size="s">
+          <wa-icon slot="icon" data-i="info"></wa-icon>
+          <span id="explain"></span> Daikin's hall system switches every aircon off at 11:00; if a period runs past that, the app switches it back on at 11:01. If you change the aircon yourself, the schedule won't undo it.
+        </wa-callout>
+      </div>
+    </div>
+  </div>
+</template>
+
+<template id="schedule-dialogs">
+  <!-- Add / edit a period on the selected night or day -->
+  <wa-dialog id="dlg" label="Add a period" light-dismiss>
+    <div class="wa-stack wa-gap-m">
+      <div class="times">
+        <time-wheel id="f-start" label="On at"></time-wheel>
+        <time-wheel id="f-end" label="Off at"></time-wheel>
+      </div>
+      <div class="runs" id="f-runs"></div>
+      <div class="wa-stack wa-gap-2xs">
+        <span class="flabel">Repeats on</span>
+        <div class="pick" id="f-days"></div>
+      </div>
+      <div class="runs" id="f-past11" hidden>Daikin's hall system switches every aircon off at 11:00. The app switches it back on at 11:01, so this period runs to the end. To stop at 11:00 instead, set Off to 11:00.</div>
+      <wa-number-input id="f-sp" label="Setpoint (°C)" min="22" max="26" step="1" value="24" hint="The hall allows 22–26 °C"></wa-number-input>
+      <wa-radio-group id="f-mode" label="Mode" orientation="horizontal" size="s" value="C">
+        <wa-radio appearance="button" value="C">Cool</wa-radio>
+        <wa-radio appearance="button" value="D">Dehumidify</wa-radio>
+        <wa-radio appearance="button" value="F">Fan</wa-radio>
+        <wa-radio appearance="button" value="A">Auto</wa-radio>
+      </wa-radio-group>
+      <wa-radio-group id="f-fan" label="Fan speed" orientation="horizontal" size="s" value="A">
+        <wa-radio appearance="button" value="A">Auto</wa-radio>
+        <wa-radio appearance="button" value="1">1</wa-radio><wa-radio appearance="button" value="2">2</wa-radio><wa-radio appearance="button" value="3">3</wa-radio><wa-radio appearance="button" value="4">4</wa-radio><wa-radio appearance="button" value="5">5</wa-radio>
+      </wa-radio-group>
+      <div class="clash" id="f-clash" role="alert" hidden><wa-icon data-i="alert"></wa-icon><span id="f-clash-text"></span></div>
+    </div>
+    <wa-button slot="footer" appearance="plain" variant="danger" id="f-delete"><wa-icon slot="start" data-i="delete"></wa-icon><span id="f-delete-text">Delete</span></wa-button>
+    <wa-button slot="footer" variant="brand" id="f-save">Save</wa-button>
+  </wa-dialog>
+
+  <!-- Copy the selected night or day to others -->
+  <wa-dialog id="copy-dlg" label="Copy to other nights" light-dismiss>
+    <div class="wa-stack wa-gap-m">
+      <div class="quick">
+        <wa-button size="s" appearance="outlined" data-quick="work"></wa-button>
+        <wa-button size="s" appearance="outlined" data-quick="weekend"></wa-button>
+        <wa-button size="s" appearance="outlined" data-quick="all"></wa-button>
+      </div>
+      <div class="pick" id="c-pick"></div>
+      <div class="runs" id="c-note"></div>
+      <div class="clash" id="c-clash" role="alert" hidden><wa-icon data-i="alert"></wa-icon><span id="c-clash-text"></span></div>
+    </div>
+    <wa-button slot="footer" variant="brand" id="c-save" disabled>Copy</wa-button>
+  </wa-dialog>
+</template>
+</head>
+<body></body>
+</html>

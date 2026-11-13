@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en" class="wa-theme-default wa-palette-default wa-light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hall Aircon · Web Awesome</title>
+<!-- Web Awesome 3.14.0 (MIT), the component library Home Assistant's frontend builds on. Free set only. -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@awesome.me/webawesome@3.14.0/dist-cdn/styles/webawesome.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@awesome.me/webawesome@3.14.0/dist-cdn/styles/utilities.css">
+<script type="module" src="https://cdn.jsdelivr.net/npm/@awesome.me/webawesome@3.14.0/dist-cdn/webawesome.loader.js"></script>
+<style>
+  html, body { min-height: 100%; margin: 0; padding: 0; }
+  wa-page { --menu-width: 15rem; }
+  wa-page[view='mobile'] { --menu-width: auto; }
+  header[slot="header"] { padding: var(--wa-space-s) var(--wa-space-l); }
+  main { padding: var(--wa-space-l); max-width: 1400px; }
+  wa-page[view='mobile'] main { padding: var(--wa-space-m); }
+  wa-page[view='desktop'] .menu-btn { display: none; }
+
+  .nav a { display: flex; align-items: center; gap: var(--wa-space-s); padding: var(--wa-space-xs) var(--wa-space-s); border-radius: var(--wa-border-radius-m); color: var(--wa-color-text-normal); text-decoration: none; }
+  .nav a[aria-current] { background: var(--wa-color-brand-fill-quiet); color: var(--wa-color-brand-on-quiet); font-weight: var(--wa-font-weight-semibold); }
+  .nav a:hover { background: var(--wa-color-neutral-fill-quiet); }
+
+  /* Setpoint ring: the full ring is the hall's 22–26 °C range */
+  .dial { display: grid; justify-items: center; gap: var(--wa-space-m); }
+  wa-progress-ring.setpoint { --size: 13rem; --track-width: 14px; --indicator-color: var(--wa-color-brand-fill-loud); }
+  .ring-label { display: grid; justify-items: center; line-height: 1.1; }
+  .ring-label .num { font-size: 3.5rem; font-weight: var(--wa-font-weight-bold); }
+  .big { font-size: var(--wa-font-size-2xl); font-weight: var(--wa-font-weight-bold); }
+  wa-qr-code { display: block; margin-inline: auto; }
+</style>
+</head>
+<body>
+<wa-page mobile-breakpoint="768" disable-navigation-toggle>
+  <header slot="header" class="wa-split">
+    <span class="wa-cluster wa-gap-s">
+      <wa-button appearance="plain" size="small" class="menu-btn" id="menu" title="Menu"><wa-icon name="bars" label="Menu"></wa-icon></wa-button>
+      <wa-icon name="snowflake" style="color: var(--wa-color-brand-fill-loud)"></wa-icon><strong>Hall Aircon</strong>
+    </span>
+    <span class="wa-cluster wa-gap-xs">
+      <wa-badge variant="warning" pill>S$2.40</wa-badge>
+      <wa-button appearance="plain" size="small" id="scheme" title="Light / dark"><wa-icon name="circle-half-stroke" label="Light / dark"></wa-icon></wa-button>
+      <wa-button appearance="plain" size="small" title="Notifications"><wa-icon name="bell" label="Notifications"></wa-icon></wa-button>
+    </span>
+  </header>
+
+  <nav slot="navigation" class="nav wa-stack wa-gap-3xs">
+    <a href="#" aria-current="page"><wa-icon name="house"></wa-icon>Room</a>
+    <a href="#"><wa-icon name="chart-line"></wa-icon>Usage</a>
+    <a href="#"><wa-icon name="wallet"></wa-icon>Wallet</a>
+    <a href="#"><wa-icon name="qrcode"></wa-icon>Pairing</a>
+  </nav>
+
+  <main class="wa-stack wa-gap-l">
+    <div class="wa-split wa-gap-m">
+      <div class="wa-stack wa-gap-3xs">
+        <h1 class="wa-heading-xl" style="margin:0">H11-XX-XX-XXXX-01</h1>
+        <span class="wa-caption-m">Hall 11 · unofficial web controller</span>
+      </div>
+      <wa-button variant="danger" id="power"><wa-icon slot="start" name="power-off"></wa-icon><span>Turn off</span></wa-button>
+    </div>
+
+    <wa-callout variant="warning">
+      <wa-icon slot="icon" name="triangle-exclamation"></wa-icon>
+      <strong>Low balance.</strong> S$2.40 left. The aircon switches off at S$0.
+    </wa-callout>
+
+    <!-- wa-grid reflows on its own: one column on phones, more as space allows -->
+    <div class="wa-grid wa-gap-l" style="--min-column-size: 16rem">
+      <wa-card>
+        <div slot="header" class="wa-split"><strong>Temperature</strong><wa-tag variant="brand" size="small" id="state">Cooling</wa-tag></div>
+        <div class="dial">
+          <wa-progress-ring class="setpoint" id="ring" value="50" label="Setpoint">
+            <span class="ring-label"><span class="num"><span id="sp">24</span>°</span><span class="wa-caption-m">Room 26 °C</span></span>
+          </wa-progress-ring>
+          <div class="wa-cluster wa-gap-m">
+            <wa-button pill appearance="outlined" id="minus" title="Lower"><wa-icon name="minus" label="Lower"></wa-icon></wa-button>
+            <wa-button pill appearance="outlined" id="plus" title="Raise"><wa-icon name="plus" label="Raise"></wa-icon></wa-button>
+          </div>
+          <span class="wa-caption-s">The hall allows 22–26 °C</span>
+        </div>
+      </wa-card>
+
+      <wa-card>
+        <strong slot="header">Operation</strong>
+        <div class="wa-stack wa-gap-l">
+          <wa-radio-group label="Mode" orientation="horizontal" value="C">
+            <wa-radio appearance="button" value="C">Cool</wa-radio>
+            <wa-radio appearance="button" value="F">Fan</wa-radio>
+            <wa-radio appearance="button" value="A">Auto</wa-radio>
+            <wa-radio appearance="button" value="D">Dry</wa-radio>
+          </wa-radio-group>
+          <wa-slider label="Fan speed" min="0" max="5" step="1" value="2" hint="0 is auto, 1–5 are the manual levels">
+            <span slot="reference">Auto</span><span slot="reference">5</span>
+          </wa-slider>
+          <wa-switch hint="Off keeps the flap fixed">Swing flap</wa-switch>
+        </div>
+      </wa-card>
+
+      <wa-card>
+        <strong slot="header">Wallet</strong>
+        <div class="wa-stack wa-gap-m">
+          <div class="wa-split"><span class="wa-caption-m">Balance</span><span class="big">S$2.40</span></div>
+          <wa-progress-bar value="5" label="Balance of S$50 cap"></wa-progress-bar>
+          <div class="wa-split"><span class="wa-caption-m">Today</span><span>S$1.24 · 3h 10m</span></div>
+          <wa-button variant="brand" id="topup"><wa-icon slot="start" name="qrcode"></wa-icon>Top up with PayNow</wa-button>
+        </div>
+      </wa-card>
+
+      <wa-card>
+        <strong slot="header">Unit</strong>
+        <div class="wa-stack wa-gap-s">
+          <div class="wa-split"><span class="wa-cluster wa-gap-xs"><wa-icon name="wifi"></wa-icon>Connection</span><wa-badge variant="success">Online</wa-badge></div>
+          <wa-divider></wa-divider>
+          <div class="wa-split"><span class="wa-cluster wa-gap-xs"><wa-icon name="user"></wa-icon>Remote bills</span><span>You</span></div>
+          <wa-divider></wa-divider>
+          <div class="wa-split"><span class="wa-cluster wa-gap-xs"><wa-icon name="clock"></wa-icon>Auto-off</span><span>Daily 11:00</span></div>
+        </div>
+      </wa-card>
+
+      <wa-card style="grid-column: 1 / -1">
+        <strong slot="header">History</strong>
+        <div class="wa-stack wa-gap-s">
+          <div class="wa-split"><span class="wa-stack wa-gap-3xs"><span>Cooling 01:15 – 04:25</span><span class="wa-caption-s">190 min · from web</span></span><span>−S$1.24</span></div>
+          <wa-divider></wa-divider>
+          <div class="wa-split"><span class="wa-stack wa-gap-3xs"><span>Turned on by remote</span><span class="wa-caption-s">22:00 – 00:30 · 150 min</span></span><span>−S$0.98</span></div>
+          <wa-divider></wa-divider>
+          <div class="wa-split"><span class="wa-stack wa-gap-3xs"><span>PayNow top-up</span><span class="wa-caption-s">28 Oct · 22:25</span></span><wa-badge variant="success">+S$10.00</wa-badge></div>
+        </div>
+      </wa-card>
+    </div>
+  </main>
+</wa-page>
+
+<wa-dialog label="Top up with PayNow" id="dialog" light-dismiss>
+  <div class="wa-stack wa-gap-l">
+    <wa-radio-group label="Amount" orientation="horizontal" value="10">
+      <wa-radio appearance="button" value="10">S$10</wa-radio>
+      <wa-radio appearance="button" value="20">S$20</wa-radio>
+      <wa-radio appearance="button" value="30">S$30</wa-radio>
+      <wa-radio appearance="button" value="40">S$40</wa-radio>
+      <wa-radio appearance="button" value="50">S$50</wa-radio>
+    </wa-radio-group>
+    <!-- Placeholder value: the real QR comes back from POST /topup -->
+    <wa-qr-code value="PAYNOW-PLACEHOLDER-NOT-A-REAL-PAYMENT" size="180" radius="0.3" label="PayNow QR placeholder"></wa-qr-code>
+    <wa-callout variant="neutral" size="small"><wa-icon slot="icon" name="circle-info"></wa-icon>Expires in 14:32. Nothing is charged until you confirm in your bank app.</wa-callout>
+  </div>
+  <wa-button slot="footer" variant="brand" data-dialog="close">Done</wa-button>
+</wa-dialog>
+
+<script type="module">
+  const html = document.documentElement;
+  let dark = matchMedia("(prefers-color-scheme: dark)").matches;
+  const apply = () => { html.classList.toggle("wa-dark", dark); html.classList.toggle("wa-light", !dark); };
+  apply();
+  document.getElementById("scheme").addEventListener("click", () => { dark = !dark; apply(); });
+
+  const MIN = 22, MAX = 26;
+  let sp = 24, t;
+  const ring = document.getElementById("ring"), spEl = document.getElementById("sp"), state = document.getElementById("state");
+  const draw = () => {
+    ring.value = ((sp - MIN) / (MAX - MIN)) * 100;
+    spEl.textContent = sp;
+    state.variant = "neutral"; state.textContent = "Sending…";
+    clearTimeout(t);
+    t = setTimeout(() => { state.variant = "brand"; state.textContent = "Cooling"; }, 5000);
+  };
+  document.getElementById("minus").addEventListener("click", () => { sp = Math.max(MIN, sp - 1); draw(); });
+  document.getElementById("plus").addEventListener("click", () => { sp = Math.min(MAX, sp + 1); draw(); });
+
+  // Menu button drives wa-page's own mobile drawer
+  const page = document.querySelector("wa-page");
+  document.getElementById("menu").addEventListener("click", () => page.toggleNavigation());
+
+  const dialog = document.getElementById("dialog");
+  document.getElementById("topup").addEventListener("click", () => (dialog.open = true));
+
+  const power = document.getElementById("power");
+  let on = true;
+  power.addEventListener("click", () => {
+    on = !on;
+    power.variant = on ? "danger" : "brand";
+    power.querySelector("span").textContent = on ? "Turn off" : "Turn on";
+  });
+</script>
+</body>
+</html>

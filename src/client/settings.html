@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en" class="wa-theme-default wa-palette-default wa-light theme-ha" data-scheme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Settings · Hall Aircon</title>
+<link rel="icon" href="data:,">
+<script type="module" src="./pages/settings.ts"></script>
+<!-- Page markup, ported from mocks/settings.html. settings.ts clones these into the app shell and fills in
+     the text with textContent (room names come from Daikin). No style="" attributes: the CSP is style-src 'self'. -->
+<template id="settings-main">
+  <h1>Settings</h1>
+
+  <wa-callout variant="danger" id="load-error" hidden>
+    <wa-icon slot="icon" data-i="alert"></wa-icon>
+    <span id="load-error-text">Couldn't load your account. Try again.</span>
+  </wa-callout>
+
+  <wa-card>
+    <div class="wa-stack wa-gap-s">
+      <div class="wa-split"><span class="muted">Signed in as</span><strong id="who">—</strong></div>
+      <wa-divider></wa-divider>
+      <div class="wa-split"><span class="muted">Sign in again by</span><strong id="expiry">—</strong></div>
+    </div>
+  </wa-card>
+
+  <wa-card>
+    <form class="wa-stack wa-gap-s" id="pair-form" novalidate>
+      <h2 class="card-title"><wa-icon data-i="remote"></wa-icon>Your room</h2>
+      <div class="wa-split"><span class="muted">Paired room</span><strong id="room">—</strong></div>
+      <wa-input id="pair-code" label="Aircon code" placeholder="H11-12-34-5678-01" autocomplete="off" autocapitalize="characters" spellcheck="false" hint="The code printed on your aircon. Enter a new one to pair a different room."></wa-input>
+      <p class="msg error" id="pair-msg" role="alert" hidden></p>
+      <wa-button type="submit" variant="brand" id="pair-btn">Pair</wa-button>
+    </form>
+  </wa-card>
+
+  <wa-card id="room-account-card" hidden>
+    <div class="wa-stack wa-gap-s">
+      <h2 class="card-title"><wa-icon data-i="card"></wa-icon>Room Account</h2>
+      <p class="muted" id="room-account-text"></p>
+      <p class="msg error" id="room-account-msg" role="alert" hidden></p>
+      <wa-button appearance="outlined" id="room-account-btn">Become the Room Account holder</wa-button>
+    </div>
+  </wa-card>
+
+  <wa-button appearance="outlined" size="l" id="signout"><wa-icon slot="start" data-i="logout"></wa-icon>Sign out</wa-button>
+
+  <wa-details summary="Extra protection (optional)" id="protection">
+    <div class="wa-stack wa-gap-s">
+      <p>Cloudflare Access puts a sign-in in front of this address, so strangers can't reach it at all. It is optional and free, but Cloudflare asks for a card when you first set up Zero Trust.</p>
+      <ol class="steps">
+        <li>In Cloudflare, open <strong>Workers &amp; Pages</strong>, pick this Worker, go to <strong>Settings</strong> then <strong>Domains &amp; Routes</strong>, and click <strong>Enable Cloudflare Access</strong> next to workers.dev. Choose who can sign in (your own email).</li>
+        <li>Copy the team domain and the application audience (AUD) tag that Cloudflare shows. Paste the team domain without <code>https://</code>, like <code>your-team.cloudflareaccess.com</code>.</li>
+        <li>In the same Worker, go to <strong>Settings</strong> then <strong>Variables and Secrets</strong> and add them as <code>ACCESS_TEAM_DOMAIN</code> and <code>ACCESS_AUD</code> (Text or Secret). From then on the Worker also checks Cloudflare's token on every request for your data (<code>/api/*</code>). Updates keep them.</li>
+      </ol>
+    </div>
+  </wa-details>
+</template>
+
+<template id="settings-dialog">
+  <wa-dialog id="confirm" label="Are you sure?">
+    <p class="confirm-text" id="confirm-text"></p>
+    <wa-button slot="footer" appearance="plain" data-dialog="close">Cancel</wa-button>
+    <wa-button slot="footer" variant="brand" id="confirm-ok">OK</wa-button>
+  </wa-dialog>
+</template>
+</head>
+<body></body>
+</html>

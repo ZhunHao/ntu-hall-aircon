@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en" class="wa-theme-default wa-palette-default wa-light theme-ha" data-scheme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Sign in · Hall Aircon</title>
+<link rel="icon" href="data:,">
+<script type="module" src="./pages/signin.ts"></script>
+</head>
+<body>
+<div class="top">
+  <span class="brand"><wa-icon library="mdi" name="snowflake"></wa-icon>Hall Aircon</span>
+  <wa-button appearance="plain" size="s" id="scheme" title="Light or dark"><wa-icon library="mdi" name="theme-light-dark" label="Light or dark"></wa-icon></wa-button>
+</div>
+
+<div class="wrap" id="wrap" hidden>
+
+  <!-- Welcome -->
+  <section class="wa-stack wa-gap-l" data-screen="welcome">
+    <div class="wa-stack wa-gap-xs">
+      <h1 tabindex="-1">Control your hall aircon from any browser</h1>
+      <p class="lede">Works on your phone, tablet or laptop. Same NTU account and wallet as the Hall Aircon app.</p>
+    </div>
+    <wa-card>
+      <div class="trust">
+        <div><wa-icon library="mdi" name="shield-lock-outline"></wa-icon><span>This copy runs on <strong>your own</strong> Cloudflare account. Your login is stored only in this copy, encrypted, so your schedule can run while your browser is closed.</span></div>
+        <div><wa-icon library="mdi" name="account-circle-outline"></wa-icon><span>You sign in on NTU's own page. This app never sees your NTU password.</span></div>
+        <div><wa-icon library="mdi" name="timer-sand-complete"></wa-icon><span>Sign-in lasts 90 days, then you do it again.</span></div>
+      </div>
+    </wa-card>
+    <wa-button variant="brand" size="l" data-go="1"><wa-icon slot="start" library="mdi" name="login"></wa-icon>Sign in with NTU</wa-button>
+    <div class="unofficial">Unofficial. Not affiliated with NTU or Daikin.</div>
+  </section>
+
+  <!-- Steps 1 and 2 -->
+  <section class="wa-stack wa-gap-l" data-screen="steps" hidden>
+    <div class="wa-cluster wa-gap-xs"><wa-button appearance="plain" size="s" data-go="welcome"><wa-icon slot="start" library="mdi" name="arrow-left"></wa-icon>Back</wa-button></div>
+    <div class="steps" aria-label="Progress">
+      <div class="step" data-step="1"><span class="dot">1</span>Open NTU sign-in</div>
+      <div class="step" data-step="2"><span class="dot">2</span>Copy &amp; paste the address</div>
+    </div>
+
+    <!-- Step 1 -->
+    <div class="wa-stack wa-gap-m" data-panel="1">
+      <h1 tabindex="-1">Sign in on NTU's page</h1>
+      <p class="lede">It opens in a new tab. Use your usual NTU email and password. Keep this tab open, you'll come back here.</p>
+      <wa-button variant="brand" size="l" id="open-ntu" href="https://cmsntu-prod.daikinpayu.com/adfs/login" target="_blank" rel="noopener noreferrer"><wa-icon slot="end" library="mdi" name="open-in-new"></wa-icon>Open NTU sign-in</wa-button>
+      <wa-button appearance="outlined" data-go="2">I've signed in</wa-button>
+    </div>
+
+    <!-- Step 2: copy and paste on one screen, so the picture of what to copy sits next to where it goes -->
+    <div class="wa-stack wa-gap-m" data-panel="2" hidden>
+      <h1 tabindex="-1">Copy the error page's address, paste it here</h1>
+      <p class="lede">After you sign in, NTU shows a page that only says <strong>Cannot GET</strong>. That's expected: your sign-in code is in its <strong>address</strong>.</p>
+      <div class="copy-paste">
+        <div class="wa-stack wa-gap-s">
+          <div class="browser" aria-hidden="true">
+            <div class="bar"><span class="dots"><i></i><i></i><i></i></span><span class="url">cmsntu-prod.daikinpayu.com/adfs/saml/redirect/<b>AbCdEf0123456789/xYz+Q==</b></span></div>
+            <div class="page">Cannot GET /adfs/saml/redirect/AbCdEf0123456789/xYz+Q==</div>
+          </div>
+          <div class="callout-arrow"><wa-icon library="mdi" name="content-copy"></wa-icon>Copy this address</div>
+          <div class="how">
+            <div><wa-icon library="mdi" name="laptop"></wa-icon><span><strong>Laptop:</strong> click the address bar, then <kbd>Ctrl</kbd>/<kbd>⌘</kbd> + <kbd>C</kbd>.</span></div>
+            <div><wa-icon library="mdi" name="cellphone"></wa-icon><span><strong>Phone:</strong> tap the address bar, then <em>Copy</em> (or Share → Copy).</span></div>
+          </div>
+        </div>
+        <div class="wa-stack wa-gap-s">
+          <wa-input id="paste" label="Paste the address here" placeholder="https://cmsntu-prod.daikinpayu.com/adfs/saml/redirect/…" with-clear autocomplete="off" spellcheck="false" hint="The whole address, or even the whole error text. We'll find the code in it.">
+            <wa-icon slot="start" library="mdi" name="link-variant"></wa-icon>
+          </wa-input>
+          <wa-button appearance="outlined" id="paste-btn"><wa-icon slot="start" library="mdi" name="content-paste"></wa-icon>Paste from clipboard</wa-button>
+          <div class="found" id="found" hidden></div>
+          <div class="found bad" id="submit-error" role="alert" hidden></div>
+          <wa-button variant="brand" size="l" id="finish" disabled>Finish sign-in</wa-button>
+          <span class="unofficial">The code works once. It's swapped for a login that's stored, encrypted, only in your copy.</span>
+        </div>
+      </div>
+      <wa-details summary="Trouble?">
+        <div class="wa-stack wa-gap-xs small">
+          <span><strong>The Hall Aircon app opened instead.</strong> Open NTU sign-in in a private or incognito tab, or on a laptop.</span>
+          <span><strong>NTU says the session expired.</strong> Go back to step 1 and open it again.</span>
+          <span><strong>Copying only gave part of it.</strong> Paste anyway. If the code is cut off, we'll tell you.</span>
+        </div>
+      </wa-details>
+    </div>
+  </section>
+
+  <!-- Signing in -->
+  <section class="wa-stack wa-gap-l centered" data-screen="busy" hidden aria-live="polite">
+    <wa-spinner class="big-spinner"></wa-spinner>
+    <h1 tabindex="-1">Signing you in…</h1>
+    <p class="lede">Checking the code with the hall's system.</p>
+  </section>
+
+  <!-- Success -->
+  <section class="wa-stack wa-gap-l" data-screen="success" hidden>
+    <wa-callout variant="success"><wa-icon slot="icon" library="mdi" name="check-circle-outline"></wa-icon><strong tabindex="-1">You're signed in.</strong></wa-callout>
+    <wa-card>
+      <div class="wa-stack wa-gap-s">
+        <div class="wa-split"><span class="lede">Signed in as</span><strong id="who">—</strong></div>
+        <wa-divider></wa-divider>
+        <div class="wa-split"><span class="lede">Paired aircon</span><strong id="aircon">—</strong></div>
+        <wa-divider></wa-divider>
+        <div class="wa-split"><span class="lede">Wallet</span><strong id="wallet">—</strong></div>
+        <wa-divider></wa-divider>
+        <div class="wa-split"><span class="lede">Sign in again by</span><strong id="expiry">—</strong></div>
+      </div>
+    </wa-card>
+    <wa-button variant="brand" size="l" href="/">Go to my aircon</wa-button>
+  </section>
+
+  <!-- Code rejected -->
+  <section class="wa-stack wa-gap-l" data-screen="rejected" hidden>
+    <wa-callout variant="danger"><wa-icon slot="icon" library="mdi" name="alert-outline"></wa-icon><strong tabindex="-1">That code didn't work.</strong> It may have expired or already been used. Codes only work once and don't last long.</wa-callout>
+    <p class="lede">Sign in on NTU's page again to get a fresh code. It only takes a moment if you're still signed in to NTU.</p>
+    <wa-button variant="brand" size="l" data-go="1">Get a new code</wa-button>
+  </section>
+
+  <!-- Session expired (#expired) -->
+  <section class="wa-stack wa-gap-l" data-screen="expired" hidden>
+    <wa-callout variant="warning"><wa-icon slot="icon" library="mdi" name="timer-sand-complete"></wa-icon><strong tabindex="-1">Time to sign in again.</strong> Sign-ins last 90 days, and yours has run out.</wa-callout>
+    <p class="lede">Your aircon and wallet are unchanged. Anything already running keeps running.</p>
+    <wa-button variant="brand" size="l" data-go="1"><wa-icon slot="start" library="mdi" name="login"></wa-icon>Sign in with NTU</wa-button>
+  </section>
+</div>
+</body>
+</html>

@@ -1,0 +1,148 @@
+/* App styles. Everything here uses --wa-* tokens (or HA tokens through the theme layer),
+ * so it follows the Home Assistant theme in light and dark. No inline styles anywhere: the CSP is style-src 'self'. */
+
+/* Mode colours (README, Design system). Cool and auto keep Home Assistant's climate colours;
+ * dry is teal (HA's orange reads as heating) and fan is blue-grey (HA's cyan clashed with teal). */
+html.theme-ha {
+  --mode-cool: var(--state-climate-cool-color);
+  --mode-dry: var(--teal-color);
+  --mode-fan: var(--blue-grey-color);
+  --mode-auto: var(--state-climate-auto-color);
+  --mode-off: var(--wa-color-neutral-fill-loud);
+}
+
+body {
+  margin: 0;
+  font-family: var(--ha-font-family-body, Roboto, Noto, sans-serif);
+  background: var(--wa-color-surface-default);
+  color: var(--wa-color-text-normal);
+}
+
+/* ---------- Shell ---------- */
+wa-page {
+  --menu-width: 15rem;
+}
+wa-page[view="mobile"] {
+  --menu-width: auto;
+}
+wa-page[view="desktop"] .menu-btn {
+  display: none;
+}
+
+.shell-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--wa-space-xs);
+  padding: var(--wa-space-xs) var(--wa-space-m);
+  min-width: 0;
+}
+.shell-header .brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--wa-space-xs);
+  font-weight: 500;
+  font-size: var(--wa-font-size-l);
+}
+.shell-header .left {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--wa-space-2xs);
+  min-width: 0;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--wa-space-3xs);
+  padding: var(--wa-space-s);
+}
+.nav a {
+  display: flex;
+  align-items: center;
+  gap: var(--wa-space-s);
+  padding: var(--wa-space-xs) var(--wa-space-s);
+  min-height: 40px;
+  border-radius: var(--wa-border-radius-m);
+  color: var(--wa-color-text-normal);
+  text-decoration: none;
+}
+.nav a:hover {
+  background: var(--wa-color-neutral-fill-quiet);
+}
+.nav a[aria-current="page"] {
+  background: var(--wa-color-brand-fill-quiet);
+  color: var(--wa-color-brand-on-quiet);
+  font-weight: 500;
+}
+
+.expiry-banner {
+  box-sizing: border-box;
+  width: 100%;
+  padding: var(--wa-space-xs) var(--wa-space-m);
+  text-align: center;
+  background: var(--wa-color-warning-fill-quiet);
+  color: var(--wa-color-warning-on-quiet);
+  font-size: var(--wa-font-size-s);
+}
+.expiry-banner a {
+  color: inherit;
+  font-weight: 500;
+}
+
+.content {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: var(--wa-space-l);
+  min-width: 0;
+  max-width: 100%;
+  padding: var(--wa-space-m);
+}
+
+.nav wa-icon,
+.shell-header wa-icon {
+  font-size: 1.25rem;
+}
+
+/* ---------- Toasts (lib/toast.ts) ---------- */
+.toasts {
+  position: fixed;
+  inset: auto 0 var(--wa-space-m) 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--wa-space-xs);
+  padding-inline: var(--wa-space-m);
+  pointer-events: none;
+  z-index: 1000;
+}
+.toast {
+  max-width: min(28rem, 100%);
+  padding: var(--wa-space-s) var(--wa-space-m);
+  border-radius: var(--wa-border-radius-m);
+  background: var(--wa-color-neutral-fill-loud);
+  color: var(--wa-color-neutral-on-loud);
+  box-shadow: var(--wa-shadow-m);
+  font-size: var(--wa-font-size-s);
+}
+.toast-success { background: var(--wa-color-success-fill-loud); color: var(--wa-color-success-on-loud); }
+.toast-danger { background: var(--wa-color-danger-fill-loud); color: var(--wa-color-danger-on-loud); }
+.toast-warning { background: var(--wa-color-warning-fill-loud); color: var(--wa-color-warning-on-loud); }
+.toast.has-action {
+  display: flex;
+  align-items: center;
+  gap: var(--wa-space-m);
+  pointer-events: auto;
+}
+.toast-action {
+  flex: none;
+  padding: var(--wa-space-2xs) var(--wa-space-s);
+  border: var(--wa-border-width-s) solid currentColor;
+  border-radius: var(--wa-border-radius-m);
+  background: transparent;
+  color: inherit;
+  font: 500 var(--wa-font-size-s) var(--ha-font-family-body, Roboto, sans-serif);
+  cursor: pointer;
+}
+.toast-action:hover { background: color-mix(in srgb, currentColor 15%, transparent); }

@@ -1,0 +1,38 @@
+/* History page. No inline styles: the CSP is style-src 'self'. */
+[hidden] { display: none !important; }
+
+h1 { margin: 0; font-size: var(--wa-font-size-2xl); font-weight: 400; }
+
+wa-tab-group { min-width: 0; }
+wa-tab-panel::part(base) { padding-block: var(--wa-space-m); }
+
+.list { display: grid; gap: var(--wa-space-xs); min-width: 0; }
+.row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--wa-space-m);
+  min-width: 0;
+  padding: var(--wa-space-s) var(--wa-space-m);
+  border: var(--wa-border-width-s) solid var(--wa-color-surface-border);
+  border-radius: var(--wa-border-radius-l);
+  background: var(--wa-color-surface-default);
+}
+.row .main { display: grid; gap: 2px; min-width: 0; }
+.row .side { display: grid; gap: 2px; justify-items: end; flex: none; text-align: right; }
+.row .title { font-weight: 500; overflow-wrap: anywhere; }
+.row .sub { font-size: var(--wa-font-size-s); color: var(--wa-color-text-quiet); overflow-wrap: anywhere; }
+.row .value { font-weight: 500; font-variant-numeric: tabular-nums; }
+.row.unread .title::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: var(--wa-space-xs);
+  border-radius: 50%;
+  background: var(--wa-color-brand-fill-loud);
+}
+
+.note { margin: 0; text-align: center; color: var(--wa-color-text-quiet); font-size: var(--wa-font-size-s); }
+.note.error { color: var(--wa-color-danger-on-quiet); }
+wa-tab-panel wa-button { display: block; margin-top: var(--wa-space-m); }

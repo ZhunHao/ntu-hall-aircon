@@ -1,0 +1,122 @@
+/* Schedule page, ported from mocks/schedule.html. No inline styles: the CSP is style-src 'self'.
+ * Bars take only left/width from schedule.ts through CSSOM; colours come from the m-* classes below. */
+[hidden] { display: none !important; }
+
+.loading { display: flex; align-items: center; justify-content: center; gap: var(--wa-space-s); padding: var(--wa-space-3xl, 3rem) 0; color: var(--wa-color-text-quiet); }
+.sched { display: grid; gap: var(--wa-space-l); min-width: 0; }
+.layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--wa-space-l); align-items: start; }
+@media (min-width: 900px) { .layout { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); } }
+.col { display: grid; gap: var(--wa-space-m); min-width: 0; }
+.muted { color: var(--wa-color-text-quiet); font-size: var(--wa-font-size-s); }
+.section-title { font-size: var(--wa-font-size-l); font-weight: 500; margin: 0; display: flex; gap: var(--wa-space-xs); align-items: center; }
+.section-title wa-icon { color: var(--wa-color-text-quiet); }
+
+/* Mode colours: --c is what bars, swatches and period icons colour themselves with. */
+.m-C { --c: var(--mode-cool); }
+.m-D { --c: var(--mode-dry); }
+.m-F { --c: var(--mode-fan); }
+.m-A { --c: var(--mode-auto); }
+
+/* ---------- Status + cost ---------- */
+.summary { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--wa-space-s); }
+@media (min-width: 640px) { .summary { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); } }
+.status { display: flex; align-items: center; gap: var(--wa-space-m); padding: var(--wa-space-m); border-radius: var(--wa-border-radius-l); border: var(--wa-border-width-m) solid var(--wa-color-success-fill-loud); background: color-mix(in srgb, var(--wa-color-success-fill-loud) 10%, var(--wa-color-surface-default)); min-width: 0; }
+.status .status-ico { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; font-size: 22px; flex: none; color: var(--wa-color-success-on-loud); background: var(--wa-color-success-fill-loud); }
+.status .status-text { flex: 1; min-width: 0; }
+.status .status-title { font-size: var(--wa-font-size-l); font-weight: 500; }
+.status.paused { border-color: var(--wa-color-warning-fill-loud); background: color-mix(in srgb, var(--wa-color-warning-fill-loud) 12%, var(--wa-color-surface-default)); }
+.status.paused .status-ico { background: var(--wa-color-warning-fill-loud); color: var(--wa-color-warning-on-loud); }
+.stat { padding: var(--wa-space-s) var(--wa-space-m); border: var(--wa-border-width-s) solid var(--wa-color-surface-border); border-radius: var(--wa-border-radius-l); background: var(--wa-color-surface-default); }
+.stat .k { font-size: var(--wa-font-size-s); color: var(--wa-color-text-quiet); }
+.stat .v { font-size: var(--wa-font-size-l); font-weight: 500; }
+
+/* ---------- View switch ---------- */
+.view-row { display: flex; align-items: center; gap: var(--wa-space-s); flex-wrap: wrap; }
+.view-label { font-size: var(--wa-font-size-s); font-weight: 500; }
+.vopt { display: inline-flex; align-items: center; gap: 6px; }
+.vopt small { color: var(--wa-color-text-quiet); font-variant-numeric: tabular-nums; }
+wa-radio[checked] .vopt small { color: inherit; opacity: .8; }
+@media (max-width: 520px) { .vopt small { display: none; } }
+
+/* ---------- Night / day tabs: times in plain text, the week chart carries the colours ---------- */
+.nights { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
+.night { display: grid; justify-items: center; align-content: start; gap: 4px; padding: 8px 6px; border-radius: var(--wa-border-radius-l); border: var(--wa-border-width-s) solid var(--wa-color-surface-border); background: var(--wa-color-surface-default); color: var(--wa-color-text-normal); font: 500 var(--wa-font-size-s) var(--ha-font-family-body); cursor: pointer; min-width: 0; height: auto; line-height: 1.3; }
+.night .t { display: flex; flex-wrap: wrap; justify-content: center; font-size: var(--wa-font-size-xs); font-weight: 400; font-variant-numeric: tabular-nums; color: var(--wa-color-text-quiet); line-height: 1.3; }
+.night .t.off { font-style: italic; }
+@media (max-width: 520px) { .night { padding: 8px 2px; } .night .t { flex-direction: column; align-items: center; font-size: 11px; } }
+.night[aria-selected="true"] { background: var(--wa-color-brand-fill-loud); border-color: transparent; color: var(--wa-color-brand-on-loud); }
+.night[aria-selected="true"] .t { color: inherit; }
+
+/* ---------- One night or day ---------- */
+.night-head { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--wa-space-s); flex-wrap: wrap; }
+.night-head h2 { margin: 0; font-size: var(--wa-font-size-xl); font-weight: 400; }
+.mini { position: relative; height: 28px; border-radius: 8px; background: var(--wa-color-neutral-fill-quiet); overflow: hidden; margin: var(--wa-space-s) 0 4px; }
+.mini i, .track i { position: absolute; top: 0; bottom: 0; border-radius: 4px; background: var(--c); }
+/* The tail of a period that started in the previous night or day */
+.mini i.spill, .track i.spill { opacity: .45; border-top-left-radius: 0; border-bottom-left-radius: 0; }
+.mini .mark, .track .mark { position: absolute; top: 0; bottom: 0; width: 0; border-left: 1px dashed var(--wa-color-text-quiet); opacity: .6; }
+.axis { display: flex; justify-content: space-between; font-size: 11px; color: var(--wa-color-text-quiet); }
+.week-axis { margin: 4px 2px 0 50px; }
+.carry { all: unset; cursor: pointer; display: block; padding: 6px 0; font-size: var(--wa-font-size-s); color: var(--wa-color-text-quiet); border-bottom: 1px dashed var(--wa-color-surface-border); }
+.carry:hover, .carry:focus-visible { color: var(--wa-color-text-link); }
+.periods { display: grid; margin-top: var(--wa-space-s); }
+.period { all: unset; box-sizing: border-box; display: grid; grid-template-columns: 92px 36px minmax(0, 1fr) auto; gap: var(--wa-space-s); align-items: center; padding: var(--wa-space-s) 0; border-top: var(--wa-border-width-s) solid var(--wa-color-surface-border); cursor: pointer; font: inherit; color: inherit; text-align: left; width: 100%; }
+.period:hover, .period:focus-visible { background: var(--wa-color-neutral-fill-quiet); }
+.period .when { font-variant-numeric: tabular-nums; font-weight: 500; line-height: 1.15; }
+.period .when small { display: block; font-size: 11px; font-weight: 400; color: var(--wa-color-text-quiet); }
+.period .ico { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; font-size: 18px; color: var(--c); background: color-mix(in srgb, var(--c) 20%, transparent); }
+.period .what { min-width: 0; }
+.period .what > span { display: block; }
+.period .rep { font-size: var(--wa-font-size-xs); color: var(--wa-color-text-quiet); }
+.period .note { font-size: var(--wa-font-size-xs); color: var(--wa-color-warning-on-quiet, var(--wa-color-text-quiet)); }
+.period .edit { color: var(--wa-color-text-quiet); }
+.empty-night { text-align: center; padding: var(--wa-space-l) 0 var(--wa-space-s); display: grid; gap: var(--wa-space-s); justify-items: center; }
+.night-actions { display: flex; gap: var(--wa-space-xs); flex-wrap: wrap; margin-top: var(--wa-space-s); }
+
+/* ---------- Week chart ---------- */
+.week { display: grid; gap: 6px; }
+.wk-row { all: unset; box-sizing: border-box; display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 8px; align-items: center; cursor: pointer; border-radius: 6px; padding: 2px; }
+.wk-row:hover, .wk-row:focus-visible { background: var(--wa-color-neutral-fill-quiet); }
+.wk-row.sel { outline: 2px solid var(--wa-color-brand-fill-loud); }
+.wk-row .d { font-size: var(--wa-font-size-s); font-weight: 500; }
+.track { position: relative; height: 20px; border-radius: 6px; background: var(--wa-color-neutral-fill-quiet); overflow: hidden; }
+.legend { display: flex; flex-wrap: wrap; gap: var(--wa-space-s); font-size: var(--wa-font-size-s); color: var(--wa-color-text-quiet); margin-top: var(--wa-space-s); }
+.legend .sw { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 4px; vertical-align: -1px; background: var(--c); }
+.legend .sw.cut { width: 0; border-radius: 0; background: none; border-left: 1px dashed currentColor; }
+
+/* ---------- Activity ---------- */
+.activity { list-style: none; margin: 0; padding: 0; display: grid; }
+.activity li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px var(--wa-space-s); padding: var(--wa-space-xs) 0; border-top: var(--wa-border-width-s) solid var(--wa-color-surface-border); font-size: var(--wa-font-size-s); }
+.activity li:first-child { border-top: 0; }
+.activity .when { color: var(--wa-color-text-quiet); font-variant-numeric: tabular-nums; }
+.activity .what { grid-column: 1; min-width: 0; overflow-wrap: anywhere; }
+.activity .why { grid-column: 1 / -1; color: var(--wa-color-text-quiet); overflow-wrap: anywhere; }
+.activity .res { grid-column: 2; grid-row: 1 / span 2; align-self: center; font-weight: 500; }
+.activity .res-done { color: var(--wa-color-success-on-quiet); }
+.activity .res-skipped { color: var(--wa-color-text-quiet); }
+.activity .res-failed { color: var(--wa-color-danger-on-quiet); }
+
+/* ---------- Dialogs ---------- */
+.times { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--wa-space-s); }
+/* Looping hour:minute wheel (lib/time-wheel.ts). Row height must match ROW there. */
+time-wheel { display: block; min-width: 0; }
+time-wheel .flabel { display: block; margin-bottom: var(--wa-space-2xs); }
+.tw { position: relative; display: flex; align-items: center; justify-content: center; gap: 2px; border: var(--wa-border-width-s) solid var(--wa-color-surface-border); border-radius: var(--wa-border-radius-m); }
+.tw-band { position: absolute; inset-inline: 8px; top: 80px; height: 40px; border-radius: var(--wa-border-radius-s); background: var(--wa-color-neutral-fill-quiet); pointer-events: none; }
+.tw-col { position: relative; height: 200px; width: 3.25em; overflow-y: scroll; overscroll-behavior: contain; scroll-snap-type: y mandatory; scrollbar-width: none; text-align: center; border-radius: var(--wa-border-radius-s); outline: none; }
+.tw-col::-webkit-scrollbar { display: none; }
+.tw-col:focus-visible { outline: var(--wa-focus-ring); }
+.tw-col.tw-jump { scroll-snap-type: none; }
+.tw-col > div { height: 40px; }
+.tw-col > div[data-r] { scroll-snap-align: center; font: 500 var(--wa-font-size-l)/40px var(--ha-font-family-body); font-variant-numeric: tabular-nums; color: var(--wa-color-text-normal); opacity: .2; cursor: pointer; user-select: none; }
+.tw-col > div[data-d="1"] { opacity: .45; }
+.tw-col > div[data-d="0"] { opacity: 1; }
+.tw-sep { position: relative; font: 500 var(--wa-font-size-l) var(--ha-font-family-body); }
+.runs { font-size: var(--wa-font-size-s); color: var(--wa-color-text-quiet); }
+.clash { font-size: var(--wa-font-size-s); color: var(--wa-color-danger-on-quiet, var(--wa-color-danger-fill-loud)); display: flex; gap: 6px; align-items: flex-start; }
+.flabel { font-weight: 500; font-size: var(--wa-font-size-s); }
+.pick { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
+.pick button { height: 36px; min-width: 0; border-radius: var(--wa-border-radius-pill); border: var(--wa-border-width-s) solid var(--wa-color-surface-border); background: transparent; color: var(--wa-color-text-normal); font: 500 var(--wa-font-size-s) var(--ha-font-family-body); cursor: pointer; }
+.pick button[aria-pressed="true"] { background: var(--wa-color-brand-fill-loud); border-color: transparent; color: var(--wa-color-brand-on-loud); }
+.pick button:disabled { opacity: .35; cursor: default; }
+.quick { display: flex; gap: 6px; flex-wrap: wrap; }

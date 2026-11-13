@@ -1,0 +1,54 @@
+/* Sign-in page, ported from mocks/signin.html. No inline styles: the CSP is style-src 'self'. */
+.top { display: flex; align-items: center; justify-content: space-between; padding: var(--wa-space-xs) var(--wa-space-m); }
+.top .brand { display: inline-flex; gap: var(--wa-space-xs); align-items: center; font-weight: 500; font-size: var(--wa-font-size-l); }
+.top .brand wa-icon { color: var(--wa-color-brand-fill-loud); }
+.wrap { box-sizing: border-box; max-width: 34rem; margin: 0 auto; padding: var(--wa-space-m) var(--wa-space-m) var(--wa-space-2xl); }
+@media (min-width: 871px) { .wrap { padding-top: var(--wa-space-2xl, 3rem); } }
+h1 { font-size: var(--wa-font-size-2xl); font-weight: 400; margin: 0; line-height: 1.2; }
+h1:focus, strong:focus { outline: none; }
+.lede { color: var(--wa-color-text-quiet); margin: 0; }
+.small { font-size: var(--wa-font-size-s); }
+[hidden] { display: none !important; }
+
+.centered { justify-items: center; text-align: center; padding-top: 3rem; }
+.big-spinner { font-size: 2.5rem; }
+
+/* Step indicator */
+.steps { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--wa-space-xs); }
+.step { display: grid; justify-items: center; gap: 4px; font-size: var(--wa-font-size-s); color: var(--wa-color-text-quiet); text-align: center; }
+.step .dot { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; font-weight: 500; border: var(--wa-border-width-m) solid var(--wa-color-surface-border); background: var(--wa-color-surface-default); }
+.step.on { color: var(--wa-color-text-normal); font-weight: 500; }
+.step.on .dot { border-color: var(--wa-color-brand-fill-loud); background: var(--wa-color-brand-fill-loud); color: var(--wa-color-brand-on-loud); }
+.step.done .dot { border-color: var(--wa-color-success-fill-loud); background: var(--wa-color-success-fill-loud); color: var(--wa-color-success-on-loud); }
+
+/* Picture of the expected error page, so nobody panics */
+.browser { border: var(--wa-border-width-s) solid var(--wa-color-surface-border); border-radius: var(--wa-border-radius-l); overflow: hidden; background: var(--wa-color-surface-default); }
+.browser .bar { display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: var(--wa-color-neutral-fill-quiet); }
+.browser .dots i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 4px; background: var(--wa-color-neutral-fill-normal); }
+.browser .url { flex: 1; min-width: 0; padding: 4px 10px; border-radius: var(--wa-border-radius-pill); background: var(--wa-color-surface-default); font-size: var(--wa-font-size-s); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; outline: 2px solid var(--wa-color-brand-fill-loud); outline-offset: 1px; }
+.browser .url b { color: var(--wa-color-brand-on-quiet); font-weight: 500; }
+.browser .page { padding: 18px 14px 22px; font-family: ui-monospace, Menlo, monospace; font-size: 13px; overflow-wrap: anywhere; }
+.callout-arrow { display: flex; gap: 6px; align-items: center; font-size: var(--wa-font-size-s); color: var(--wa-color-brand-on-quiet); margin-top: -4px; padding-left: 40px; }
+
+.copy-paste { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--wa-space-l); }
+.copy-paste > * { min-width: 0; }
+@media (min-width: 871px) {
+  .wrap.wide { max-width: 60rem; }
+  .copy-paste { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; }
+}
+.how { display: grid; grid-template-columns: 1fr 1fr; gap: var(--wa-space-s); }
+@media (max-width: 480px) { .how { grid-template-columns: 1fr; } }
+.how div { display: flex; gap: var(--wa-space-xs); align-items: flex-start; font-size: var(--wa-font-size-s); }
+.how wa-icon { font-size: 20px; color: var(--wa-color-text-quiet); flex: none; margin-top: 1px; }
+
+.found { display: flex; gap: var(--wa-space-xs); align-items: center; font-size: var(--wa-font-size-s); }
+.found.ok { color: var(--wa-color-success-on-quiet, var(--wa-color-success-fill-loud)); }
+.found.bad { color: var(--wa-color-danger-on-quiet, var(--wa-color-danger-fill-loud)); }
+code.mask { font-size: var(--wa-font-size-s); padding: 2px 6px; border-radius: var(--wa-border-radius-s); background: var(--wa-color-neutral-fill-quiet); }
+
+.trust { display: grid; gap: var(--wa-space-xs); font-size: var(--wa-font-size-s); color: var(--wa-color-text-quiet); }
+.trust div { display: flex; gap: var(--wa-space-xs); align-items: flex-start; }
+.trust wa-icon { font-size: 18px; flex: none; margin-top: 1px; }
+.unofficial { text-align: center; font-size: var(--wa-font-size-xs); color: var(--wa-color-text-quiet); }
+
+#who, #aircon, #wallet, #expiry { overflow-wrap: anywhere; text-align: right; }
